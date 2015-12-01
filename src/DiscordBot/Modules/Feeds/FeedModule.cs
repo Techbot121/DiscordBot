@@ -54,9 +54,9 @@ namespace DiscordBot.Modules.Feeds
 						var settings = _settings.Load(e.Server);
 						Channel channel;
 						if (e.Args[1] != "")
-							channel = e.Channel;
-						else
 							channel = await _client.FindChannel(e, e.Args[1], ChannelType.Text);
+						else
+							channel = e.Channel;
 						if (channel == null) return;
 
 						if (settings.AddFeed(e.Args[0], channel.Id))

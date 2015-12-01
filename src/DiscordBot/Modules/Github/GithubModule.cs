@@ -48,9 +48,9 @@ namespace DiscordBot.Modules.Github
 						var settings = _settings.Load(e.Server);
 						Channel channel;
 						if (e.Args[1] != "")
-							channel = e.Channel;
-						else
 							channel = await _client.FindChannel(e, e.Args[1], ChannelType.Text);
+						else
+							channel = e.Channel;
 						if (channel == null) return;
 
 						string url = FilterUrl(e.Args[0]);
