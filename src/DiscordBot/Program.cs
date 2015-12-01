@@ -119,6 +119,7 @@ namespace DiscordBot
 			//(Modules are an isolation of functionality where they can be enabled only for certain channel/servers, and are grouped in the built-in help)
 			var modules = _client.AddService(new ModuleService());
 			_client.AddService(new SettingsService());
+			_client.AddService(new HttpService());
 			modules.Install(new Modules.Admin.AdminModule(), "Admin", FilterType.ServerWhitelist);
 			modules.Install(new Modules.Colors.ColorsModule(), "Colors", FilterType.ServerWhitelist);
 			modules.Install(new Modules.Execute.ExecuteModule(), "Execute", FilterType.ServerWhitelist);

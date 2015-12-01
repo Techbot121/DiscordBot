@@ -10,7 +10,6 @@ namespace DiscordBot
 {
 	public class HttpService : IService
 	{
-		private DiscordClient _client;
 		private HttpClient _http;
 
 		void IService.Install(DiscordClient client)
