@@ -34,7 +34,6 @@
 		"Discord.Net": "",
 		"Discord.Net.Commands": "",
 		"Discord.Net.Modules": "",
-		"Discord.Net.Sessions": "",
 		"Newtonsoft.Json": "7.0.1",
 		"NAudio": "1.7.3",
 		"Microsoft.CodeAnalysis.CSharp": "1.1.0-rc1-20151109-01",
