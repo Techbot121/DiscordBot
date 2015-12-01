@@ -17,12 +17,14 @@ namespace DiscordBot.Modules.Github
 	{
 		private ModuleManager _manager;
 		private DiscordClient _client;
+		private HttpService _http;
 		private SettingsManager<Settings> _settings;
 
 		void IModule.Install(ModuleManager manager)
 		{
 			_manager = manager;
 			_client = manager.Client;
+			_http = _client.GetService<HttpService>();
 			_settings = _client.GetService<SettingsService>()
 				.AddModule<GithubModule, Settings>(manager);
 
@@ -151,7 +153,7 @@ namespace DiscordBot.Modules.Github
 
 								foreach (var branch in repo.Value.Branches)
 								{
-									content = await Http.Send(
+									content = await _http.Send(
 										HttpMethod.Get,
 										$"https://api.github.com/repos/{repo.Key}/commits?sha={branch}&since={since}",
 										authToken: GlobalSettings.Github.Token);
@@ -186,7 +188,7 @@ namespace DiscordBot.Modules.Github
 									await Task.Delay(1000, cancelToken);
 								}
 
-								content = await Http.Send(
+								content = await _http.Send(
 									HttpMethod.Get,
 									$"https://api.github.com/repos/{repo.Key}/issues?state=all&sort=updated&since={since}",
 									authToken: GlobalSettings.Github.Token);

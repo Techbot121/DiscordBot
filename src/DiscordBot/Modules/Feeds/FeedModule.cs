@@ -23,12 +23,14 @@ namespace DiscordBot.Modules.Feeds
 
 		private ModuleManager _manager;
 		private DiscordClient _client;
+		private HttpService _http;
 		private SettingsManager<Settings> _settings;
 
 		void IModule.Install(ModuleManager manager)
 		{
 			_manager = manager;
 			_client = manager.Client;
+			_http = _client.GetService<HttpService>();
 			_settings = _client.GetService<SettingsService>()
 				.AddModule<FeedModule, Settings>(manager);
 
@@ -100,7 +102,7 @@ namespace DiscordBot.Modules.Feeds
 							var channel = _client.GetChannel(feed.Value.ChannelId);
 							if (channel != null && channel.Server.CurrentUser.GetPermissions(channel).SendMessages)
 							{
-								var content = await Http.Send(HttpMethod.Get, feed.Key);
+								var content = await _http.Send(HttpMethod.Get, feed.Key);
                                 var doc = XDocument.Load(await content.ReadAsStreamAsync());
 								var rssNode = doc.Element("rss");
 								var atomNode = doc.Element("{http://www.w3.org/2005/Atom}feed");

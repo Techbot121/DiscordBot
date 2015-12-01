@@ -18,12 +18,14 @@ namespace DiscordBot.Modules.Twitch
 	{
 		private ModuleManager _manager;
 		private DiscordClient _client;
+		private HttpService _http;
 		private SettingsManager<Settings> _settings;
 
 		void IModule.Install(ModuleManager manager)
 		{
 			_manager = manager;
 			_client = manager.Client;
+			_http = _client.GetService<HttpService>();
 			_settings = _client.GetService<SettingsService>()
 				.AddModule<TwitchModule, Settings>(manager);
 
@@ -141,7 +143,7 @@ namespace DiscordBot.Modules.Twitch
 							{
 								try
 								{
-									var content = await Http.Send(HttpMethod.Get, $"https://api.twitch.tv/kraken/streams/{twitchStream.Key}");
+									var content = await _http.Send(HttpMethod.Get, $"https://api.twitch.tv/kraken/streams/{twitchStream.Key}");
 									var response = await content.ReadAsStringAsync();
 									JToken json = JsonConvert.DeserializeObject(response) as JToken;
 
