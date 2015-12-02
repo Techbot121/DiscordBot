@@ -58,7 +58,7 @@ namespace DiscordBot
 		}
 	}
 
-	internal static class InternalExtension
+	internal static class InternalExtensions
 	{
 		public static Task<User[]> FindUsers(this DiscordClient client, CommandEventArgs e, string username, string discriminator)
 			=> FindUsers(client, e, username, discriminator, false);
