@@ -23,6 +23,7 @@ namespace DiscordBot.Modules.Feeds
 
 		private ModuleManager _manager;
 		private DiscordClient _client;
+		private bool _isRunning;
 		private HttpService _http;
 		private SettingsManager<Settings> _settings;
 
@@ -85,13 +86,20 @@ namespace DiscordBot.Modules.Feeds
 					});
 			});
 
-			Task.Run(Run);
+			_client.Connected += (s, e) =>
+			{
+				if (!_isRunning)
+				{
+					Task.Run(Run);
+					_isRunning = true;
+				}
+			};
 		}
 
 		public async Task Run()
 		{
 			var cancelToken = _client.CancelToken;
-			while (_client.State == DiscordClientState.Connected)
+			while (!_client.CancelToken.IsCancellationRequested)
 			{
 				foreach (var settings in _settings.AllServers)
 				{
