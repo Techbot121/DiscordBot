@@ -147,7 +147,7 @@ namespace DiscordBot
 					{
 						string msg = ex.GetBaseException().Message;
 						_client.Log(LogMessageSeverity.Error, $"Login Failed: {msg}");
-						Task.Delay(1000).Wait();
+						await Task.Delay(1000);
 					}
 				}
 			});
