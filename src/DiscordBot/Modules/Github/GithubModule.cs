@@ -133,7 +133,6 @@ namespace DiscordBot.Modules.Github
 					Task.Run(Run);
 					_isRunning = true;
 				}
-				return TaskHelper.CompletedTask;
 			};
 		}
 

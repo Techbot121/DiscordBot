@@ -35,7 +35,7 @@ namespace DiscordBot
 				MessageCacheLength = 10,
 				UseLargeThreshold = true
 			});
-			_client.LogMessage += (s, e) => { _client.Log(e); return TaskHelper.CompletedTask; };
+			_client.LogMessage += (s, e) => _client.Log(e);
 
 			//Add ASP.Net resources so we can access them elsewhere
 			_client.AddSingleton(env);

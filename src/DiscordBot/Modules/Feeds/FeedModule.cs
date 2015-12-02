@@ -93,7 +93,6 @@ namespace DiscordBot.Modules.Feeds
 					Task.Run(Run);
 					_isRunning = true;
 				}
-				return TaskHelper.CompletedTask;
 			};
 		}
 

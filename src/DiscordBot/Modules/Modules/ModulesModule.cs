@@ -37,15 +37,27 @@ namespace DiscordBot.Modules.Modules
 					{
 						var module = GetModule(e.Args[0]);
 						if (module == null)
-							return _client.ReplyError(e, "Unknown module");
+						{
+							_client.ReplyError(e, "Unknown module");
+							return;
+						}
 						if (module.FilterType == FilterType.Unrestricted || module.FilterType == FilterType.AllowPrivate)
-							return _client.ReplyError(e, "This module is global and cannot be enabled/disabled.");
+						{
+							_client.ReplyError(e, "This module is global and cannot be enabled/disabled.");
+							return;
+						}
 						if (!module.FilterType.HasFlag(FilterType.ServerWhitelist))
-							return _client.ReplyError(e, "This module doesn't support being enabled for servers.");
+						{
+							_client.ReplyError(e, "This module doesn't support being enabled for servers.");
+							return;
+						}
 						var server = e.Server;
-						if ( module.EnableServer(server))
-							return _client.ReplyError(e, $"Module {module.Id} was already enabled for server {server.Name}.");
-						return _client.Reply(e, $"Module {module.Id} was enabled for server {server.Name}.");
+						if (!module.EnableServer(server))
+						{
+							_client.ReplyError(e, $"Module {module.Id} was already enabled for server {server.Name}.");
+							return;
+						}
+						_client.Reply(e, $"Module {module.Id} was enabled for server {server.Name}.");
 					});
 				group.CreateCommand("disable")
 					.Description("Disables a module for this server.")
@@ -55,15 +67,27 @@ namespace DiscordBot.Modules.Modules
 					{
 						var module = GetModule(e.Args[0]);
 						if (module == null)
-							return _client.ReplyError(e, "Unknown module");
+						{
+							_client.ReplyError(e, "Unknown module");
+							return;
+						}
 						if (module.FilterType == FilterType.Unrestricted || module.FilterType == FilterType.AllowPrivate)
-							return _client.ReplyError(e, "This module is global and cannot be enabled/disabled.");
+						{
+							_client.ReplyError(e, "This module is global and cannot be enabled/disabled.");
+							return;
+						}
 						if (!module.FilterType.HasFlag(FilterType.ServerWhitelist))
-							return _client.ReplyError(e, "This module doesn't support being enabled for servers.");
+						{
+							_client.ReplyError(e, "This module doesn't support being enabled for servers.");
+							return;
+						}
 						var server = e.Server;
                         if (!module.DisableServer(server))
-							return _client.ReplyError(e, $"Module {module.Id} was not enabled for server {server.Name}.");
-						return _client.Reply(e, $"Module {module.Id} was disabled for server {server.Name}.");
+                        {
+							_client.ReplyError(e, $"Module {module.Id} was not enabled for server {server.Name}.");
+							return;
+						}
+						_client.Reply(e, $"Module {module.Id} was disabled for server {server.Name}.");
 					});
 			});
 		}
