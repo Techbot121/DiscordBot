@@ -129,6 +129,7 @@ namespace DiscordBot.Modules.Twitch
 					Task.Run(Run);
 					_isRunning = true;
 				}
+				return TaskHelper.CompletedTask;
 			};
 		}
 		public async Task Run()
