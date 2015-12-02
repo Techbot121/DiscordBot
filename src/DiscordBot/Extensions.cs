@@ -27,7 +27,7 @@ namespace DiscordBot
 		public static Task Reply<T>(this DiscordClient client, User user, Channel channel, string prefix, T obj)
 			=> Reply(client, user, channel, prefix, obj != null ? JsonConvert.SerializeObject(obj, Formatting.Indented) : "null");
 		public static Task Reply(this DiscordClient client, CommandEventArgs e, string prefix, string text)
-			=> Reply(client, e.User, e.Channel, prefix, (prefix != null ? $"{Format.Bold(prefix)}:\n" : "\n") + text);
+			=> Reply(client, e.User, e.Channel, (prefix != null ? $"{Format.Bold(prefix)}:\n" : "\n") + text);
 		public static Task Reply(this DiscordClient client, User user, Channel channel, string prefix, string text)
 			=> Reply(client, user, channel, (prefix != null ? $"{Format.Bold(prefix)}:\n" : "\n") + text);
 
