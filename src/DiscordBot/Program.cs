@@ -98,8 +98,10 @@ namespace DiscordBot
 							break;
 						case CommandErrorType.BadArgCount:
 							//msg = "You provided the incorrect number of arguments for this command.";
+							break;
 						case CommandErrorType.InvalidInput:
 							//msg = "Unable to parse your command, please check your input.";
+							break;
 						case CommandErrorType.UnknownCommand:
 							//msg = "Unknown command.";
 							break;
