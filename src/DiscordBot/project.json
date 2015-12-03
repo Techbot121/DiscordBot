@@ -32,6 +32,7 @@
 
 	"dependencies": {
 		"Discord.Net": "",
+		"Discord.Net.Audio": "",
 		"Discord.Net.Commands": "",
 		"Discord.Net.Modules": "",
 		"Newtonsoft.Json": "7.0.1",

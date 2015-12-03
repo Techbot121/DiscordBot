@@ -1,4 +1,5 @@
 ﻿using Discord;
+//using Discord.Audio;
 using Discord.Commands;
 using Discord.Commands.Permissions.Levels;
 using Discord.Commands.Permissions.Userlist;
@@ -28,10 +29,6 @@ namespace DiscordBot
 				LogLevel = LogMessageSeverity.Verbose,
 				TrackActivity = true,
 				UseMessageQueue = false,
-				VoiceMode = DiscordVoiceMode.Both,
-				EnableVoiceMultiserver = true,
-				EnableVoiceEncryption = true,
-				VoiceBitrate = 512,
 				MessageCacheLength = 10,
 				UseLargeThreshold = true
 			});
@@ -46,7 +43,7 @@ namespace DiscordBot
 
 			//Add a blacklist service so we can add people that can't run any commands
 			_client.AddService(new BlacklistService());
-
+			
 			//Add a permission level service so we can divide people up into multiple roles
 			//(in this case, base on their permissions in a given server or channel)
 			_client.AddService(new PermissionLevelService((u, c) =>
@@ -116,6 +113,14 @@ namespace DiscordBot
 
 			//Log to the console whenever someone uses a command
 			commands.RanCommand += (s, e) => _client.Log(LogMessageSeverity.Info, "Command", $"{e.User.Name}: {e.Command.Text}");
+
+			/*_client.AddService(new AudioService(new AudioServiceConfig
+			{
+				VoiceMode = DiscordVoiceMode.Both,
+				EnableVoiceMultiserver = true,
+				EnableVoiceEncryption = true,
+				VoiceBitrate = 512,
+			}));*/
 
 			//Add a module service to use Discord.Modules, and add the different modules we want in this bot
 			//(Modules are an isolation of functionality where they can be enabled only for certain channel/servers, and are grouped in the built-in help)

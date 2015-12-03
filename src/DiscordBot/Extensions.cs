@@ -17,7 +17,7 @@ namespace DiscordBot
 			if (text != null)
 			{
 				if (!channel.IsPrivate)
-					await client.SendMessage(channel, $"{Mention.User(user)} {text}");
+					await client.SendMessage(channel, $"{user.Mention} {text}");
 				else
 					await client.SendMessage(channel, text);
 			}
