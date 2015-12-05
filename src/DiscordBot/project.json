@@ -3,8 +3,17 @@
 	"description": "DiscordBot",
 	"authors": [ "RogueException" ],
 	"tags": [ "discord", "discordapp" ],
+	"projectUrl": "https://github.com/RogueException/Discord.Bot",
 	"licenseUrl": "http://opensource.org/licenses/MIT",
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/RogueException/DiscordBot"
+	},
 	"exclude": [ "config" ],
+
+	"commands": {
+		"start": "DiscordBot"
+	},
 
 	"configurations": {
 		"PrivateDebug": {
@@ -24,10 +33,6 @@
 				]
 			}
 		}
-	},
-
-	"commands": {
-		"start": "DiscordBot"
 	},
 
 	"dependencies": {

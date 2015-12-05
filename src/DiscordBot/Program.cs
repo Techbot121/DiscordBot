@@ -26,13 +26,13 @@ namespace DiscordBot
 			_client = new DiscordClient(new DiscordClientConfig
 			{
 				AckMessages = true,
-				LogLevel = LogMessageSeverity.Verbose,
+				LogLevel = LogSeverity.Verbose,
 				TrackActivity = true,
 				UseMessageQueue = false,
 				MessageCacheLength = 10,
 				UseLargeThreshold = true
 			});
-			_client.LogMessage += (s, e) => _client.Log(e);
+			_client.Log().LogMessage += (s, e) => _client.Log(e);
 
 			//Add ASP.Net resources so we can access them elsewhere
 			_client.AddSingleton(env);
@@ -107,12 +107,12 @@ namespace DiscordBot
 				if (msg != null)
 				{
 					_client.ReplyError(e, msg);
-					_client.Log(LogMessageSeverity.Error, "Command", msg);
+					_client.Log(LogSeverity.Error, "Command", msg);
 				}
 			};
 
 			//Log to the console whenever someone uses a command
-			commands.RanCommand += (s, e) => _client.Log(LogMessageSeverity.Info, "Command", $"{e.User.Name}: {e.Command.Text}");
+			commands.RanCommand += (s, e) => _client.Log(LogSeverity.Info, "Command", $"{e.User.Name}: {e.Command.Text}");
 
 			/*_client.AddService(new AudioService(new AudioServiceConfig
 			{
@@ -152,8 +152,7 @@ namespace DiscordBot
 					}
 					catch (Exception ex)
 					{
-						string msg = ex.GetBaseException().Message;
-						_client.Log(LogMessageSeverity.Error, $"Login Failed: {msg}");
+						_client.Log(LogSeverity.Error, $"Login Failed", ex);
 						await Task.Delay(1000);
 					}
 				}

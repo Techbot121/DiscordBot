@@ -42,9 +42,9 @@ namespace DiscordBot
 
 		public static void Log(this DiscordClient client, LogMessageEventArgs e)
 			=> Log(client, e.Severity, e.Source, e.Message, e.Exception);
-		public static void Log(this DiscordClient client, LogMessageSeverity severity, string text, Exception ex = null)
+		public static void Log(this DiscordClient client, LogSeverity severity, string text, Exception ex = null)
 			=> Log(client, severity, null, ex);
-		public static void Log(this DiscordClient client, LogMessageSeverity severity, object source, string text, Exception ex = null)
+		public static void Log(this DiscordClient client, LogSeverity severity, object source, string text, Exception ex = null)
 		{
 			if (source != null)
 				text = $"[{severity}] ({source}) {text}";
@@ -52,7 +52,7 @@ namespace DiscordBot
 				text = $"[{severity}] {text}";
 			if (ex != null)
 				text = text + ": " + ex.GetBaseException().Message;
-			if (severity <= LogMessageSeverity.Info || (source != null && source is string))
+			if (severity <= LogSeverity.Info || (source != null && source is string))
 				Console.WriteLine(text);
 			Debug.WriteLine(text);
 		}

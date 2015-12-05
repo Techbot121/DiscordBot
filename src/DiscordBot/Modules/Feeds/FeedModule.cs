@@ -6,6 +6,7 @@ using DiscordBot.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -111,7 +112,7 @@ namespace DiscordBot.Modules.Feeds
 							if (channel != null && channel.Server.CurrentUser.GetPermissions(channel).SendMessages)
 							{
 								var content = await _http.Send(HttpMethod.Get, feed.Key);
-                                var doc = XDocument.Load(await content.ReadAsStreamAsync());
+								var doc = XDocument.Load(await content.ReadAsStreamAsync());
 								var rssNode = doc.Element("rss");
 								var atomNode = doc.Element("{http://www.w3.org/2005/Atom}feed");
 
@@ -149,9 +150,15 @@ namespace DiscordBot.Modules.Feeds
 
 								foreach (var article in articles)
 								{
-									_client.Log(LogMessageSeverity.Info, "Feed", $"New article: {article.Title}");
+									_client.Log(LogSeverity.Info, "Feed", $"New article: {article.Title}");
 									if (article.Link != null)
-										await _client.SendMessage(channel, Format.Normal(article.Link));
+									{
+										try
+										{
+											await _client.SendMessage(channel, Format.Normal(article.Link));
+										}
+										catch (HttpException ex) when (ex.StatusCode == HttpStatusCode.Forbidden) { }
+									}
 
 									if (article.PublishedAt > feed.Value.LastUpdate)
 									{
@@ -163,7 +170,7 @@ namespace DiscordBot.Modules.Feeds
 						}
 						catch (Exception ex)
 						{
-							_client.Log(LogMessageSeverity.Error, "Feed", ex.Message);
+							_client.Log(LogSeverity.Error, "Feed", ex.Message);
 						}
 					}
 				}

@@ -166,14 +166,14 @@ namespace DiscordBot.Modules.Twitch
 									{
 										if (!isStreaming) //Now offline
 										{
-											_client.Log(LogMessageSeverity.Info, "Twitch", $"{twitchStream.Key} is no longer streaming.");
+											_client.Log(LogSeverity.Info, "Twitch", $"{twitchStream.Key} is no longer streaming.");
 											twitchStream.Value.IsStreaming = false;
 											twitchStream.Value.CurrentGame = null;
 											isChannelUpdated = true;
 										}
 										else if (lastSeenGame != currentGame) //Switched game
 										{
-											_client.Log(LogMessageSeverity.Info, "Twitch", $"{twitchStream.Key} is now streaming {currentGame}.");
+											_client.Log(LogSeverity.Info, "Twitch", $"{twitchStream.Key} is now streaming {currentGame}.");
 											twitchStream.Value.IsStreaming = true;
 											twitchStream.Value.CurrentGame = currentGame;
 											isChannelUpdated = true;
@@ -184,9 +184,9 @@ namespace DiscordBot.Modules.Twitch
 										if (isStreaming) //Now online
 										{
 											if (currentGame != null)
-												_client.Log(LogMessageSeverity.Info, "Twitch", $"{twitchStream.Key} has started streaming {currentGame}.");
+												_client.Log(LogSeverity.Info, "Twitch", $"{twitchStream.Key} has started streaming {currentGame}.");
 											else
-												_client.Log(LogMessageSeverity.Info, "Twitch", $"{twitchStream.Key} has started streaming.");
+												_client.Log(LogSeverity.Info, "Twitch", $"{twitchStream.Key} has started streaming.");
 											await _client.SendMessage(channel, Format.Normal($"{twitchStream.Key} is now live (http://www.twitch.tv/{twitchStream.Key})."));
 											twitchStream.Value.IsStreaming = true;
 											twitchStream.Value.CurrentGame = currentGame;
@@ -196,7 +196,7 @@ namespace DiscordBot.Modules.Twitch
 								}
 								catch (Exception ex)
 								{
-									_client.Log(LogMessageSeverity.Error, "Twitch", ex.Message);
+									_client.Log(LogSeverity.Error, "Twitch", ex.Message);
 									await Task.Delay(5000);
 									continue;
 								}
@@ -226,11 +226,11 @@ namespace DiscordBot.Modules.Twitch
 							{
 								try
 								{
-									await _client.API.EditMessage(channelSettings.Value.StickyMessageId.Value, channelSettings.Key, text);
+									await _client.APIClient.EditMessage(channelSettings.Value.StickyMessageId.Value, channelSettings.Key, text);
                                 }
 								catch (HttpException)
 								{
-									_client.Log(LogMessageSeverity.Error, "Twitch", "Failed to edit message.");
+									_client.Log(LogSeverity.Error, "Twitch", "Failed to edit message.");
 									channelSettings.Value.StickyMessageId = null;
 								}
 							}

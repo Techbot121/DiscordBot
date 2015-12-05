@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -181,7 +182,7 @@ namespace DiscordBot.Modules.Github
 											var msg = commit?["commit"].Value<string>("message");
 											var date = new DateTimeOffset(commit["commit"]["committer"].Value<DateTime>("date").AddSeconds(1.0), TimeSpan.Zero);
 
-											_client.Log(LogMessageSeverity.Info, "Github", $"{repo.Key} {branch} #{sha}");
+											_client.Log(LogSeverity.Info, "Github", $"{repo.Key} {branch} #{sha}");
 
 											builder.Append($"\n{Format.Code(sha)} {Format.Normal(msg.Split('\n')[0])}");
 											if (date > newDate)
@@ -190,7 +191,11 @@ namespace DiscordBot.Modules.Github
 												dateChanged = true;
 											}
 										}
-										await _client.SendMessage(channel, builder.ToString());
+										try
+										{
+											await _client.SendMessage(channel, builder.ToString());
+										}
+										catch (HttpException ex) when (ex.StatusCode == HttpStatusCode.Forbidden) { }
 									}
 
 									await Task.Delay(1000, cancelToken);
@@ -227,9 +232,15 @@ namespace DiscordBot.Modules.Github
 										skip = true;
 										text = $"Updated {type} #{id}";
 									}
-									_client.Log(LogMessageSeverity.Info, "Github", $"{repo.Key} {text}");
+									_client.Log(LogSeverity.Info, "Github", $"{repo.Key} {text}");
 									if (!skip)
-										await _client.SendMessage(_client.GetChannel(repo.Value.ChannelId), $"{Format.Bold(repo.Key)} {text}:\n{Format.Normal(url)}");
+									{
+										try
+										{
+											await _client.SendMessage(_client.GetChannel(repo.Value.ChannelId), $"{Format.Bold(repo.Key)} {text}:\n{Format.Normal(url)}");
+										}
+										catch (HttpException ex) when (ex.StatusCode == HttpStatusCode.Forbidden) { }
+									}
 
 									var date = new DateTimeOffset(updatedAt.AddSeconds(1.0), TimeSpan.Zero);
 									if (date > newDate)
@@ -248,7 +259,7 @@ namespace DiscordBot.Modules.Github
 						}
 						catch (Exception ex)
 						{
-							_client.Log(LogMessageSeverity.Error, "Github", ex.Message);
+							_client.Log(LogSeverity.Error, "Github", ex.Message);
 							continue;
 						}
 
