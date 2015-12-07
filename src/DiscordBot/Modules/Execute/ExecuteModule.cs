@@ -34,9 +34,9 @@ namespace DiscordBot.Modules.Execute
 
 			var environment = _client.GetSingleton<IApplicationEnvironment>();
 			var exporter = _client.GetSingleton<ILibraryExporter>();
-			var reference = exporter.GetExport(environment.ApplicationName).MetadataReferences;
+			var references = exporter.GetAllExports(environment.ApplicationName).MetadataReferences;
 			var options = ScriptOptions.Default
-				.AddReferences(exporter.GetAllExports("DiscordBot").MetadataReferences.Select(x => ConvertMetadataReference(x)))
+				.AddReferences(references.Select(x => ConvertMetadataReference(x)))
 				.AddImports("System.Collections.Generic", "System.Linq");
 
 			manager.CreateCommands("", group =>

@@ -11,6 +11,7 @@ using Microsoft.AspNet.Hosting;
 using Microsoft.Dnx.Compilation;
 using Microsoft.Extensions.PlatformAbstractions;
 using DiscordBot.Services;
+using Discord.Audio;
 
 namespace DiscordBot
 {
@@ -23,14 +24,14 @@ namespace DiscordBot
 			GlobalSettings.Load();
 
 			//Set up the base client itself with no voice and small message queues
-			_client = new DiscordClient(new DiscordClientConfig
+			_client = new DiscordClient(new DiscordConfig
 			{
-				AckMessages = true,
 				LogLevel = LogSeverity.Verbose,
-				TrackActivity = true,
 				UseMessageQueue = false,
-				MessageCacheLength = 10,
-				UseLargeThreshold = true
+				AckMessages = true,
+				UseLargeThreshold = true,
+				MessageCacheSize = 10,
+				TrackActivity = true
 			});
 			_client.Log().LogMessage += (s, e) => _client.Log(e);
 
@@ -113,14 +114,14 @@ namespace DiscordBot
 
 			//Log to the console whenever someone uses a command
 			commands.RanCommand += (s, e) => _client.Log(LogSeverity.Info, "Command", $"{e.User.Name}: {e.Command.Text}");
-
-			/*_client.AddService(new AudioService(new AudioServiceConfig
+			
+			_client.AddService(new AudioService(new AudioServiceConfig
 			{
-				VoiceMode = DiscordVoiceMode.Both,
-				EnableVoiceMultiserver = true,
-				EnableVoiceEncryption = true,
-				VoiceBitrate = 512,
-			}));*/
+				Mode = AudioMode.Both,
+				EnableMultiserver = true,
+				EnableEncryption = true,
+				Bitrate = 512,
+			}));
 
 			//Add a module service to use Discord.Modules, and add the different modules we want in this bot
 			//(Modules are an isolation of functionality where they can be enabled only for certain channel/servers, and are grouped in the built-in help)

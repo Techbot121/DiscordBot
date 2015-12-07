@@ -1,16 +1,17 @@
 ﻿using Discord;
+using Discord.Commands;
+using Discord.Commands.Permissions.Levels;
+using Discord.Modules;
+using Discord.Net;
+using DiscordBot.Services;
+using System.Net.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Text;
-using System.Linq;
-using Discord.Commands;
-using Discord.Commands.Permissions.Levels;
-using System.Net;
-using Discord.Modules;
-using DiscordBot.Services;
-using System.Net.Http;
 
 namespace DiscordBot.Modules.Twitch
 {

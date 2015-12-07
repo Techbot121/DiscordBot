@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Net;
 using System.Net.Http.Headers;
 using Discord;
+using Discord.Net;
 
 namespace DiscordBot
 {

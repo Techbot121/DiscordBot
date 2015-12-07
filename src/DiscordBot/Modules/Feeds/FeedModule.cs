@@ -2,6 +2,7 @@
 using Discord.Commands;
 using Discord.Commands.Permissions.Levels;
 using Discord.Modules;
+using Discord.Net;
 using DiscordBot.Services;
 using System;
 using System.Collections.Generic;
