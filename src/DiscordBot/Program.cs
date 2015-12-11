@@ -30,7 +30,6 @@ namespace DiscordBot
                 AppVersion = DiscordClient.Version,
 				LogLevel = LogSeverity.Verbose,
 				UseMessageQueue = false,
-				AckMessages = true,
 				UseLargeThreshold = true,
 				MessageCacheSize = 10,
 				TrackActivity = true
