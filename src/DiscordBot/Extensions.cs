@@ -2,6 +2,7 @@
 using Discord.Commands;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -43,18 +44,51 @@ namespace DiscordBot
 		public static void Log(this DiscordClient client, LogMessageEventArgs e)
 			=> Log(client, e.Severity, e.Source, e.Message, e.Exception);
 		public static void Log(this DiscordClient client, LogSeverity severity, string text, Exception ex = null)
-			=> Log(client, severity, null, ex);
+			=> Log(client, severity, null, text, ex);
 		public static void Log(this DiscordClient client, LogSeverity severity, object source, string text, Exception ex = null)
 		{
-			if (source != null)
-				text = $"[{severity}] ({source}) {text}";
-			else
-				text = $"[{severity}] {text}";
+            char severityChar;
+            ConsoleColor color;
+            switch (severity)
+            {
+                case LogSeverity.Error:
+                    severityChar = 'E';
+                    color = ConsoleColor.Red;
+                    break;
+                case LogSeverity.Warning:
+                    severityChar = 'W';
+                    color = ConsoleColor.Yellow;
+                    break;
+                case LogSeverity.Info:
+                    severityChar = 'I';
+                    color = ConsoleColor.White;
+                    break;
+                case LogSeverity.Verbose:
+                    severityChar = 'V';
+                    color = ConsoleColor.Gray;
+                    break;
+                case LogSeverity.Debug:
+                    severityChar = 'D';
+                    color = ConsoleColor.DarkGray;
+                    break;
+                default:
+                    severityChar = '?';
+                    color = ConsoleColor.Gray;
+                    break;
+            }
+
+            if (source != null)
+                text = $"[{source}] {text}";
 			if (ex != null)
-				text = text + ": " + ex.GetBaseException().Message;
-			if (severity <= LogSeverity.Info || (source != null && source is string))
-				Console.WriteLine(text);
-			Debug.WriteLine(text);
+				text = $"{text}: {ex.GetBaseException().Message}";
+            if (severity <= LogSeverity.Info || (source != null && source is string))
+            {
+                Console.ForegroundColor = color;
+                Console.WriteLine(text);
+            }
+
+            text = $"{severityChar} {text}";
+            Debug.WriteLine(text);
 		}
 	}
 
@@ -66,12 +100,17 @@ namespace DiscordBot
 			=> (await FindUsers(client, e, username, discriminator, true))?[0];
 		public static async Task<User[]> FindUsers(this DiscordClient client, CommandEventArgs e, string username, string discriminator, bool singleTarget)
 		{
-			short? discrim;
+			IEnumerable<User> users;
 			if (discriminator == "")
-				discrim = null;
+				users = client.FindUsers(e.Server, username);
 			else
-				discrim = short.Parse(discriminator);
-			var users = client.FindUsers(e.Server, username, discrim);
+			{
+				var user = client.GetUser(e.Server, username, short.Parse(discriminator));
+				if (user == null)
+					users = Enumerable.Empty<User>();
+				else
+					users = new User[] { user };
+			}
 
 			int count = users.Count();
 			if (singleTarget)

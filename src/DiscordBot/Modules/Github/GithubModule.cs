@@ -179,14 +179,17 @@ namespace DiscordBot.Modules.Github
 
 										foreach (var commit in json.Children().Reverse())
 										{
-											var sha = commit?.Value<string>("sha")?.Substring(0, 7);
-											var msg = commit?["commit"].Value<string>("message");
+											var sha = commit.Value<string>("sha")?.Substring(0, 7);
+											var msg = commit["commit"].Value<string>("message");
 											var date = new DateTimeOffset(commit["commit"]["committer"].Value<DateTime>("date").AddSeconds(1.0), TimeSpan.Zero);
+                                            //var url = commit.Value<string>("html_url");
 
-											_client.Log(LogSeverity.Info, "Github", $"{repo.Key} {branch} #{sha}");
+                                            _client.Log(LogSeverity.Info, "Github", $"{repo.Key} {branch} #{sha}");
 
-											builder.Append($"\n{Format.Code(sha)} {Format.Normal(msg.Split('\n')[0])}");
-											if (date > newDate)
+                                            string prefix = $"\n{Format.Code(sha)} ";
+                                            builder.Append($"{prefix}{Format.Normal(msg.Split('\n')[0])}");
+                                            //builder.Append($"{prefix}{url}");
+                                            if (date > newDate)
 											{
 												newDate = date;
 												dateChanged = true;
@@ -238,7 +241,7 @@ namespace DiscordBot.Modules.Github
 									{
 										try
 										{
-											await _client.SendMessage(_client.GetChannel(repo.Value.ChannelId), $"{Format.Bold(repo.Key)} {text}:\n{Format.Normal(url)}");
+											await _client.SendMessage(_client.GetChannel(repo.Value.ChannelId), $"{Format.Bold(repo.Key)} {text}\n{Format.Normal(url)}");
 										}
 										catch (HttpException ex) when (ex.StatusCode == HttpStatusCode.Forbidden) { }
 									}

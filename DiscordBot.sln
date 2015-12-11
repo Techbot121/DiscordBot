@@ -49,6 +49,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Discord.Net.Audio", "..\Dis
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Discord.Net.Shared", "..\Discord.Net\src\Discord.Net.Shared\Discord.Net.Shared.shproj", "{2875DEB5-F248-4105-8EA2-5141E3DE8025}"
 EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "BenchmarkBot", "src\BenchmarkBot\BenchmarkBot.xproj", "{0F866252-A922-495D-BAE5-145AFA22EE83}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		..\Discord.Net\src\Discord.Net.Shared\Discord.Net.Shared.projitems*{2875deb5-f248-4105-8ea2-5141e3de8025}*SharedItemsImports = 13
@@ -165,6 +167,16 @@ Global
 		{7BFEF748-B934-4621-9B11-6302E3A9F6B3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7BFEF748-B934-4621-9B11-6302E3A9F6B3}.TestResponses|Any CPU.ActiveCfg = Release|Any CPU
 		{7BFEF748-B934-4621-9B11-6302E3A9F6B3}.TestResponses|Any CPU.Build.0 = Release|Any CPU
+		{0F866252-A922-495D-BAE5-145AFA22EE83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F866252-A922-495D-BAE5-145AFA22EE83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F866252-A922-495D-BAE5-145AFA22EE83}.PrivateDebug|Any CPU.ActiveCfg = PrivateDebug|Any CPU
+		{0F866252-A922-495D-BAE5-145AFA22EE83}.PrivateDebug|Any CPU.Build.0 = PrivateDebug|Any CPU
+		{0F866252-A922-495D-BAE5-145AFA22EE83}.PrivateRelease|Any CPU.ActiveCfg = PrivateRelease|Any CPU
+		{0F866252-A922-495D-BAE5-145AFA22EE83}.PrivateRelease|Any CPU.Build.0 = PrivateRelease|Any CPU
+		{0F866252-A922-495D-BAE5-145AFA22EE83}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F866252-A922-495D-BAE5-145AFA22EE83}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F866252-A922-495D-BAE5-145AFA22EE83}.TestResponses|Any CPU.ActiveCfg = PrivateRelease|Any CPU
+		{0F866252-A922-495D-BAE5-145AFA22EE83}.TestResponses|Any CPU.Build.0 = PrivateRelease|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -187,5 +199,6 @@ Global
 		{DFF7AFE3-CA77-4109-BADE-B4B49A4F6648} = {EA68EBE2-51C8-4440-9EF7-D633C90A5D35}
 		{7BFEF748-B934-4621-9B11-6302E3A9F6B3} = {B47C4063-C4EB-46AA-886D-B868DA1BF0A0}
 		{2875DEB5-F248-4105-8EA2-5141E3DE8025} = {B47C4063-C4EB-46AA-886D-B868DA1BF0A0}
+		{0F866252-A922-495D-BAE5-145AFA22EE83} = {A051B318-E126-4AF5-BE18-5C5B1BD1DCE1}
 	EndGlobalSection
 EndGlobal

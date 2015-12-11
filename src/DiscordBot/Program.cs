@@ -21,11 +21,13 @@ namespace DiscordBot
 
         public Program(IApplicationEnvironment env, ILibraryExporter exporter)
 		{
-			GlobalSettings.Load();
+            GlobalSettings.Load();
 
-			//Set up the base client itself with no voice and small message queues
-			_client = new DiscordClient(new DiscordConfig
+            //Set up the base client itself with no voice and small message queues
+            _client = new DiscordClient(new DiscordConfig
 			{
+                AppName = "DiscordBot",
+                AppVersion = DiscordClient.Version,
 				LogLevel = LogSeverity.Verbose,
 				UseMessageQueue = false,
 				AckMessages = true,
@@ -33,7 +35,8 @@ namespace DiscordBot
 				MessageCacheSize = 10,
 				TrackActivity = true
 			});
-			_client.Log().LogMessage += (s, e) => _client.Log(e);
+            Console.Title = $"{_client.Config.AppName} v{_client.Config.AppVersion} (Discord.Net v{DiscordClient.Version})";
+            _client.Log().LogMessage += (s, e) => _client.Log(e);
 
 			//Add ASP.Net resources so we can access them elsewhere
 			_client.AddSingleton(env);
@@ -154,7 +157,7 @@ namespace DiscordBot
 					catch (Exception ex)
 					{
 						_client.Log(LogSeverity.Error, $"Login Failed", ex);
-						await Task.Delay(1000);
+						await Task.Delay(5000);
 					}
 				}
 			});
