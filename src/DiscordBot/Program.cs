@@ -29,10 +29,8 @@ namespace DiscordBot
                 AppName = "DiscordBot",
                 AppVersion = DiscordClient.Version,
 				LogLevel = LogSeverity.Verbose,
-				UseMessageQueue = false,
 				UseLargeThreshold = true,
-				MessageCacheSize = 10,
-				TrackActivity = true
+				MessageCacheSize = 0
 			});
             Console.Title = $"{_client.Config.AppName} v{_client.Config.AppVersion} (Discord.Net v{DiscordClient.Version})";
             _client.Log().LogMessage += (s, e) => _client.Log(e);
