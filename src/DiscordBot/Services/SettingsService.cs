@@ -15,8 +15,8 @@ namespace DiscordBot.Services
 		public string Directory => _dir;
 		private readonly string _dir;
 
-		public IEnumerable<KeyValuePair<long, SettingsT>> AllServers => _servers;
-		private ConcurrentDictionary<long, SettingsT> _servers;
+		public IEnumerable<KeyValuePair<ulong, SettingsT>> AllServers => _servers;
+		private ConcurrentDictionary<ulong, SettingsT> _servers;
 
 		public SettingsManager(string name)
 		{
@@ -26,14 +26,14 @@ namespace DiscordBot.Services
 			LoadServerList();
 		}
 
-		public Task AddServer(long id, SettingsT settings)
+		public Task AddServer(ulong id, SettingsT settings)
 		{
 			if (_servers.TryAdd(id, settings))
 				return SaveServerList();
 			else
 				return Task.CompletedTask;
 		}
-		public bool RemoveServer(long id)
+		public bool RemoveServer(ulong id)
 		{
 			SettingsT settings;
 			return _servers.TryRemove(id, out settings);
@@ -43,8 +43,8 @@ namespace DiscordBot.Services
 		{
 			if (File.Exists($"{_dir}/servers.json"))
 			{
-				var servers = JsonConvert.DeserializeObject<long[]>(File.ReadAllText($"{_dir}/servers.json"));
-				_servers = new ConcurrentDictionary<long, SettingsT>(servers.ToDictionary(x => x, serverId =>
+				var servers = JsonConvert.DeserializeObject<ulong[]>(File.ReadAllText($"{_dir}/servers.json"));
+				_servers = new ConcurrentDictionary<ulong, SettingsT>(servers.ToDictionary(x => x, serverId =>
 				{
 					string path = $"{_dir}/{serverId}.json";
 					if (File.Exists(path))
@@ -54,7 +54,7 @@ namespace DiscordBot.Services
 				}));
 			}
 			else
-				_servers = new ConcurrentDictionary<long, SettingsT>();
+				_servers = new ConcurrentDictionary<ulong, SettingsT>();
 		}
 		public async Task SaveServerList()
 		{
@@ -79,7 +79,7 @@ namespace DiscordBot.Services
 
 		public SettingsT Load(Server server)
 			=> Load(server.Id);
-		public SettingsT Load(long serverId)
+		public SettingsT Load(ulong serverId)
 		{
 			SettingsT result;
 			if (_servers.TryGetValue(serverId, out result))
@@ -90,9 +90,9 @@ namespace DiscordBot.Services
 
 		public Task Save(Server server, SettingsT settings)
 			=> Save(server.Id, settings);
-		public Task Save(KeyValuePair<long, SettingsT> pair)
+		public Task Save(KeyValuePair<ulong, SettingsT> pair)
 			=> Save(pair.Key, pair.Value);
-        public async Task Save(long serverId, SettingsT settings)
+        public async Task Save(ulong serverId, SettingsT settings)
 		{
 			_servers[serverId] = settings;
 

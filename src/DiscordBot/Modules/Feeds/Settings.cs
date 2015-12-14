@@ -7,12 +7,12 @@ namespace DiscordBot.Modules.Feeds
 	{
 		public class Feed
 		{
-			public long ChannelId { get; set; }
+			public ulong ChannelId { get; set; }
 			public DateTimeOffset LastUpdate { get; set; } = DateTimeOffset.UtcNow;
 		}
 
 		public ConcurrentDictionary<string, Feed> Feeds = new ConcurrentDictionary<string, Feed>();
-		public bool AddFeed(string url, long channelId)
+		public bool AddFeed(string url, ulong channelId)
 		{
 			return Feeds.TryAdd(url, new Feed { ChannelId = channelId });
 		}

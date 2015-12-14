@@ -42,7 +42,7 @@ namespace DiscordBot.Modules
 		public class UserSettings
 		{
 			[JsonProperty("dev")]
-			public long DevId;
+			public ulong DevId;
 		}
 		[JsonProperty("users")]
 		private UserSettings _users = new UserSettings();

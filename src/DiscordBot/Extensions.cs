@@ -18,7 +18,7 @@ namespace DiscordBot
 			if (text != null)
 			{
 				if (!channel.IsPrivate)
-					await client.SendMessage(channel, $"{user.Mention} {text}");
+					await client.SendMessage(channel, $"{user.Name}: {text}");
 				else
 					await client.SendMessage(channel, text);
 			}
@@ -105,7 +105,7 @@ namespace DiscordBot
 				users = client.FindUsers(e.Server, username);
 			else
 			{
-				var user = client.GetUser(e.Server, username, short.Parse(discriminator));
+				var user = client.GetUser(e.Server, username, ushort.Parse(discriminator));
 				if (user == null)
 					users = Enumerable.Empty<User>();
 				else
@@ -137,7 +137,7 @@ namespace DiscordBot
 			return users.ToArray();
 		}
 
-		public static async Task<User> GetUser(this DiscordClient client, CommandEventArgs e, long userId)
+		public static async Task<User> GetUser(this DiscordClient client, CommandEventArgs e, ulong userId)
 		{
 			var user = client.GetUser(e.Server, userId);
 

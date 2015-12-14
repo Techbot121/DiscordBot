@@ -83,9 +83,8 @@ namespace DiscordBot
 			commands.CommandError += (s, e) =>
 			{
 				string msg = e.Exception?.GetBaseException().Message;
-				if (msg == null) //No mxception - show a generic message
+				if (msg == null) //No exception - show a generic message
 				{
-					//A lot of these messages are disabled to not spam public servers. In private ones, you may want to enable them.
 					switch (e.ErrorType)
 					{
 						case CommandErrorType.Exception:
@@ -142,6 +141,7 @@ namespace DiscordBot
 #endif
 
 			//Convert this method to an async function and connect to the server
+            //DiscordClient will automatically reconnect once we've established a connection, until then we loop on our end
 			_client.Run(async () =>
 			{
 				while (true)

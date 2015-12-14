@@ -8,11 +8,11 @@ namespace DiscordBot.Modules.Github
 	{
 		public class Repo
 		{
-			public long ChannelId { get; set; }
+			public ulong ChannelId { get; set; }
 			public DateTimeOffset LastUpdate { get; set; }
 			public string[] Branches { get; set; }
 
-			public Repo(long channelId)
+			public Repo(ulong channelId)
 			{
 				ChannelId = channelId;
 				LastUpdate = DateTimeOffset.UtcNow;
@@ -44,7 +44,7 @@ namespace DiscordBot.Modules.Github
 		}
 
 		public ConcurrentDictionary<string, Repo> Repos = new ConcurrentDictionary<string, Repo>();
-		public bool AddRepo(string repo, long channelId)
+		public bool AddRepo(string repo, ulong channelId)
 		{
 			return Repos.TryAdd(repo, new Repo(channelId));
 		}
