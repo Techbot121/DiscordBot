@@ -2,6 +2,7 @@
 using Discord.Commands;
 using Discord.Commands.Permissions.Levels;
 using Discord.Commands.Permissions.Visibility;
+using Discord.Legacy;
 using Discord.Modules;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,7 +60,7 @@ namespace DiscordBot.Modules.Admin
 						var user = await _client.FindUser(e, e.Args[0], e.Args[1]);
 						if (user == null) return;
 
-						await _client.EditUser(user, mute: true);
+						await _client.EditUser(user, isMuted: true);
 						await _client.Reply(e, $"Muted user {user.Name}.");
 					});
 				group.CreateCommand("unmute")
@@ -71,7 +72,7 @@ namespace DiscordBot.Modules.Admin
 						var user = await _client.FindUser(e, e.Args[0], e.Args[1]);
 						if (user == null) return;
 
-						await _client.EditUser(user, mute: false);
+						await _client.EditUser(user, isMuted: false);
 						await _client.Reply(e, $"Unmuted user {user.Name}.");
 					});
 				group.CreateCommand("deafen")
@@ -83,7 +84,7 @@ namespace DiscordBot.Modules.Admin
 						var user = await _client.FindUser(e, e.Args[0], e.Args[1]);
 						if (user == null) return;
 
-						await _client.EditUser(user, deaf: true);
+						await _client.EditUser(user, isDeafened: true);
 						await _client.Reply(e, $"Deafened user {user.Name}.");
 					});
 				group.CreateCommand("undeafen")
@@ -95,7 +96,7 @@ namespace DiscordBot.Modules.Admin
 						var user = await _client.FindUser(e, e.Args[0], e.Args[1]);
 						if (user == null) return;
 
-						await _client.EditUser(user, deaf: false);
+						await _client.EditUser(user, isDeafened: false);
 						await _client.Reply(e, $"Undeafened user {user.Name}.");
 					});
 

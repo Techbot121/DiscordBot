@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.Commands.Permissions.Levels;
+using Discord.Legacy;
 using Discord.Modules;
 using Discord.Net;
 using DiscordBot.Services;
@@ -27,8 +28,8 @@ namespace DiscordBot.Modules.Github
 		{
 			_manager = manager;
 			_client = manager.Client;
-			_http = _client.GetService<HttpService>();
-			_settings = _client.GetService<SettingsService>()
+			_http = _client.Services.Get<HttpService>();
+			_settings = _client.Services.Get<SettingsService>()
 				.AddModule<GithubModule, Settings>(manager);
 
 			manager.CreateCommands("repos", group =>
@@ -189,7 +190,7 @@ namespace DiscordBot.Modules.Github
                                                 _client.Log(LogSeverity.Info, "Github", $"{repo.Key} {branch} #{sha}");
 
                                                 string prefix = $"\n{Format.Code(sha)} ";
-                                                builder.Append($"{prefix}{Format.Normal(msg.Split('\n')[0])}");
+                                                builder.Append($"{prefix}{Format.Escape(msg.Split('\n')[0])}");
                                                 //builder.Append($"{prefix}{url}");
                                                 if (date > newDate)
                                                 {
@@ -243,7 +244,7 @@ namespace DiscordBot.Modules.Github
                                         {
                                             try
                                             {
-                                                await _client.SendMessage(_client.GetChannel(repo.Value.ChannelId), $"{Format.Bold(repo.Key)} {text}\n{Format.Normal(url)}");
+                                                await _client.SendMessage(_client.GetChannel(repo.Value.ChannelId), $"{Format.Bold(repo.Key)} {text}\n{Format.Escape(url)}");
                                             }
                                             catch (HttpException ex) when (ex.StatusCode == HttpStatusCode.Forbidden) { }
                                         }

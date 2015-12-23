@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.Commands.Permissions.Levels;
+using Discord.Legacy;
 using Discord.Modules;
 using Discord.Net;
 using DiscordBot.Services;
@@ -33,8 +34,8 @@ namespace DiscordBot.Modules.Feeds
         {
             _manager = manager;
             _client = manager.Client;
-            _http = _client.GetService<HttpService>();
-            _settings = _client.GetService<SettingsService>()
+            _http = _client.Services.Get<HttpService>();
+            _settings = _client.Services.Get<SettingsService>()
                 .AddModule<FeedModule, Settings>(manager);
 
             manager.CreateCommands("feeds", group =>
@@ -158,7 +159,7 @@ namespace DiscordBot.Modules.Feeds
                                         {
                                             try
                                             {
-                                                await _client.SendMessage(channel, Format.Normal(article.Link));
+                                                await _client.SendMessage(channel, Format.Escape(article.Link));
                                             }
                                             catch (HttpException ex) when (ex.StatusCode == HttpStatusCode.Forbidden) { }
                                         }

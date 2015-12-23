@@ -27,31 +27,28 @@ namespace DiscordBot
             _client = new DiscordClient(new DiscordConfig
 			{
                 AppName = "DiscordBot",
-                AppVersion = DiscordClient.Version,
+                AppVersion = DiscordConfig.LibVersion,
 				LogLevel = LogSeverity.Verbose,
 				UseLargeThreshold = true,
-				MessageCacheSize = 0
+				MessageCacheSize = 0,
+                UsePermissionsCache = false
 			});
-            Console.Title = $"{_client.Config.AppName} v{_client.Config.AppVersion} (Discord.Net v{DiscordClient.Version})";
-            _client.Log().LogMessage += (s, e) => _client.Log(e);
-
-			//Add ASP.Net resources so we can access them elsewhere
-			_client.AddSingleton(env);
-			_client.AddSingleton(exporter);
+            Console.Title = $"{_client.Config.AppName} v{_client.Config.AppVersion} (Discord.Net v{DiscordConfig.LibVersion})";
+            _client.Log.Message += (s, e) => _client.Log(e);
 
 			//Add a whitelist service so the bot only responds to commands from us or the people we choose
 			//_client.AddService(new WhitelistService(new string[] { GlobalSettings.Users.DevId }));
 
 			//Add a blacklist service so we can add people that can't run any commands
-			_client.AddService(new BlacklistService());
+			_client.Services.Add(new BlacklistService());
 			
 			//Add a permission level service so we can divide people up into multiple roles
 			//(in this case, base on their permissions in a given server or channel)
-			_client.AddService(new PermissionLevelService((u, c) =>
+			_client.Services.Add(new PermissionLevelService((u, c) =>
 			{
 				if (u.Id == GlobalSettings.Users.DevId)
 					return (int)PermissionLevel.BotOwner;
-				if (!u.IsPrivate)
+				if (u.Server != null)
 				{
 					if (u == c.Server.Owner)
 						return (int)PermissionLevel.ServerOwner;
@@ -72,7 +69,7 @@ namespace DiscordBot
 			}));
 
 			//Adds a command service to use Discord.Commands, and activate the built-in help function
-			var commands = _client.AddService(new CommandService(new CommandServiceConfig
+			var commands = _client.Services.Add(new CommandService(new CommandServiceConfig
 			{
 				CommandChar = '~',
 				HelpMode = HelpMode.Public
@@ -114,7 +111,7 @@ namespace DiscordBot
 			//Log to the console whenever someone uses a command
 			commands.RanCommand += (s, e) => _client.Log(LogSeverity.Info, "Command", $"{e.User.Name}: {e.Command.Text}");
 			
-			_client.AddService(new AudioService(new AudioServiceConfig
+			_client.Services.Add(new AudioService(new AudioServiceConfig
 			{
 				Mode = AudioMode.Both,
 				EnableMultiserver = true,
@@ -124,12 +121,12 @@ namespace DiscordBot
 
 			//Add a module service to use Discord.Modules, and add the different modules we want in this bot
 			//(Modules are an isolation of functionality where they can be enabled only for certain channel/servers, and are grouped in the built-in help)
-			var modules = _client.AddService(new ModuleService());
-			_client.AddService(new SettingsService());
-			_client.AddService(new HttpService());
+			var modules = _client.Services.Add(new ModuleService());
+			_client.Services.Add(new SettingsService());
+			_client.Services.Add(new HttpService());
 			modules.Install(new Modules.Admin.AdminModule(), "Admin", FilterType.ServerWhitelist);
 			modules.Install(new Modules.Colors.ColorsModule(), "Colors", FilterType.ServerWhitelist);
-			modules.Install(new Modules.Execute.ExecuteModule(), "Execute", FilterType.ServerWhitelist);
+			modules.Install(new Modules.Execute.ExecuteModule(env, exporter), "Execute", FilterType.ServerWhitelist);
 			modules.Install(new Modules.Feeds.FeedModule(), "Feeds", FilterType.ServerWhitelist);
 			modules.Install(new Modules.Github.GithubModule(), "Repos", FilterType.ServerWhitelist);
 			modules.Install(new Modules.Modules.ModulesModule(), "Modules", FilterType.Unrestricted);

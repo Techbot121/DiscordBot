@@ -24,17 +24,23 @@ namespace DiscordBot.Modules.Execute
 			public DiscordClient client;
 		}
 
-		private ModuleManager _manager;
+        private readonly IApplicationEnvironment _dnxEnvironment;
+        private readonly ILibraryExporter _libExporter;
+        private ModuleManager _manager;
 		private DiscordClient _client;
 
-		void IModule.Install(ModuleManager manager)
+        public ExecuteModule(IApplicationEnvironment env, ILibraryExporter libEx)
+        {
+            _dnxEnvironment = env;
+            _libExporter = libEx;
+        }
+
+        void IModule.Install(ModuleManager manager)
 		{
 			_manager = manager;
 			_client = manager.Client;
 
-			var environment = _client.GetSingleton<IApplicationEnvironment>();
-			var exporter = _client.GetSingleton<ILibraryExporter>();
-			var references = exporter.GetAllExports(environment.ApplicationName).MetadataReferences;
+			var references = _libExporter.GetAllExports(_dnxEnvironment.ApplicationName).MetadataReferences;
 			var options = ScriptOptions.Default
 				.AddReferences(references.Select(x => ConvertMetadataReference(x)))
 				.AddImports("System.Collections.Generic", "System.Linq");

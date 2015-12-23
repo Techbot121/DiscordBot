@@ -12,6 +12,8 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Text;
+using Discord.API.Client.Rest;
+using Discord.Legacy;
 
 namespace DiscordBot.Modules.Twitch
 {
@@ -27,8 +29,8 @@ namespace DiscordBot.Modules.Twitch
         {
             _manager = manager;
             _client = manager.Client;
-            _http = _client.GetService<HttpService>();
-            _settings = _client.GetService<SettingsService>()
+            _http = _client.Services.Get<HttpService>();
+            _settings = _client.Services.Get<SettingsService>()
                 .AddModule<TwitchModule, Settings>(manager);
 
             manager.CreateCommands("streams", group =>
@@ -113,7 +115,7 @@ namespace DiscordBot.Modules.Twitch
                             var channelSettings = settings.GetOrAddChannel(channel.Id);
                             if (channelSettings.UseSticky && !value && channelSettings.StickyMessageId != null)
                             {
-                                try { await _client.DeleteMessage(_client.GetMessage(channelSettings.StickyMessageId.Value)); }
+                                try { await _client.DeleteMessage(channel.GetMessage(channelSettings.StickyMessageId.Value)); }
                                 catch (HttpException ex) when (ex.StatusCode == HttpStatusCode.NotFound) { }
                             }
                             channelSettings.UseSticky = value;
@@ -190,7 +192,7 @@ namespace DiscordBot.Modules.Twitch
                                                     _client.Log(LogSeverity.Info, "Twitch", $"{twitchStream.Key} has started streaming {currentGame}.");
                                                 else
                                                     _client.Log(LogSeverity.Info, "Twitch", $"{twitchStream.Key} has started streaming.");
-                                                await _client.SendMessage(channel, Format.Normal($"{twitchStream.Key} is now live (http://www.twitch.tv/{twitchStream.Key})."));
+                                                await _client.SendMessage(channel, Format.Escape($"{twitchStream.Key} is now live (http://www.twitch.tv/{twitchStream.Key})."));
                                                 twitchStream.Value.IsStreaming = true;
                                                 twitchStream.Value.CurrentGame = currentGame;
                                                 isChannelUpdated = true;
@@ -217,9 +219,9 @@ namespace DiscordBot.Modules.Twitch
                                     if (streamData.IsStreaming)
                                     {
                                         if (streamData.CurrentGame != null)
-                                            builder.AppendLine(Format.Normal($"{stream.Key} - {streamData.CurrentGame} (http://www.twitch.tv/{stream.Key})"));
+                                            builder.AppendLine(Format.Escape($"{stream.Key} - {streamData.CurrentGame} (http://www.twitch.tv/{stream.Key})"));
                                         else
-                                            builder.AppendLine(Format.Normal($"{stream.Key} (http://www.twitch.tv/{stream.Key}))"));
+                                            builder.AppendLine(Format.Escape($"{stream.Key} (http://www.twitch.tv/{stream.Key}))"));
                                     }
                                 }
 
@@ -229,7 +231,7 @@ namespace DiscordBot.Modules.Twitch
                                 {
                                     try
                                     {
-                                        await _client.APIClient.EditMessage(channelSettings.Value.StickyMessageId.Value, channelSettings.Key, text);
+                                        await _client.StatusAPI.Send(new UpdateMessageRequest(channelSettings.Key, channelSettings.Value.StickyMessageId.Value) { Content = text, MentionedUserIds = new ulong[0] });
                                     }
                                     catch (HttpException)
                                     {

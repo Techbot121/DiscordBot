@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.Commands.Permissions.Levels;
+using Discord.Legacy;
 using Discord.Modules;
 using System.Collections.Generic;
 using System.Linq;

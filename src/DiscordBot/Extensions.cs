@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
+using Discord.Legacy;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -79,8 +80,12 @@ namespace DiscordBot
 
             if (source != null)
                 text = $"[{source}] {text}";
-			if (ex != null)
-				text = $"{text}: {ex.GetBaseException().Message}";
+            if (ex != null)
+            {
+                while (ex is AggregateException)
+                    ex = (ex as AggregateException).InnerException;
+                text = $"{text}: {ex.Message}";
+            }
             if (severity <= LogSeverity.Info || (source != null && source is string))
             {
                 Console.ForegroundColor = color;

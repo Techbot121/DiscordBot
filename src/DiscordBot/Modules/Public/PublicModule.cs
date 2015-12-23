@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.Commands.Permissions.Levels;
+using Discord.Legacy;
 using Discord.Modules;
 using System.Linq;
 using System.Threading.Tasks;
@@ -51,7 +52,7 @@ namespace DiscordBot.Modules.Public
 					.Parameter("Text", ParameterType.Unparsed)
 					.Do(async e =>
 					{
-						await _client.SendMessage(e.Channel, Mention.Resolve(e.Message, Format.Normal(e.Args[0])));
+						await _client.SendMessage(e.Channel, e.Message.Resolve(Format.Escape(e.Args[0])));
 					});
 				group.CreateCommand("sayraw")
 					.Parameter("Text", ParameterType.Unparsed)
@@ -77,19 +78,19 @@ namespace DiscordBot.Modules.Public
 					.Alias("info")
 					.Do(async e =>
 					{
-						int serverCount, channelCount, userCount, uniqueUserCount, messageCount, roleCount;
-						_client.GetCacheStats(out serverCount, out channelCount, out userCount, out uniqueUserCount, out messageCount, out roleCount);
+						//int serverCount, channelCount, userCount, uniqueUserCount, messageCount, roleCount;
+						//_client.GetCacheStats(out serverCount, out channelCount, out userCount, out uniqueUserCount, out messageCount, out roleCount);
 						await _client.Reply(e,
 							$"{Format.Bold("Basic Info")}\n" +
 							//"I'm a basic bot used to test Discord.Net and manage the Discord API server",
 							"- Author: Voltana (ID 53905483156684800)\n" +
-							$"- Library: Discord.Net ({DiscordClient.Version})\n" +
+							$"- Library: {DiscordConfig.LibName}({DiscordConfig.LibVersion})"/*\n" +
 							$"{Format.Bold("Cache Counts")}\n" +
 							$"- Channels: {channelCount}\n" +
 							$"- Messages: {messageCount}\n" +
 							$"- Roles: {roleCount}\n" +
 							$"- Servers: {serverCount}\n" +
-							$"- Users: {userCount} ({uniqueUserCount} unique)\n"
+							$"- Users: {userCount} ({uniqueUserCount} unique)\n"*/
 						);
 					});
 			});

@@ -23,7 +23,7 @@ namespace DiscordBot
 			});
 			_http.DefaultRequestHeaders.Add("accept", "*/*");
 			_http.DefaultRequestHeaders.Add("accept-encoding", "gzip, deflate");
-			_http.DefaultRequestHeaders.Add("user-agent", $"DiscordBot/{DiscordClient.Version} (https://github.com/RogueException/Discord.Net)");
+			_http.DefaultRequestHeaders.Add("user-agent", client.Config.UserAgent);
 		}
 
 		public Task<HttpContent> Send(HttpMethod method, string path, string authToken = null)
