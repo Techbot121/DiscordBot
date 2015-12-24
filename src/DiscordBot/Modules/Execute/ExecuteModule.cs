@@ -15,14 +15,15 @@ using System.Reflection.PortableExecutable;
 
 namespace DiscordBot.Modules.Execute
 {
-	/// <summary> Allows the execution of scripts from within Discord. Be very careful with the permissions of this module - allowing remote execution for anyone but the bot owner is generally a bad idea.  </summary>
-	internal class ExecuteModule : IModule
+    public class ScriptGlobals
+    {
+        public CommandEventArgs e { get; internal set; }
+        public DiscordClient client { get; internal set; }
+    }
+
+    /// <summary> Allows the execution of scripts from within Discord. Be very careful with the permissions of this module - allowing remote execution for anyone but the bot owner is generally a bad idea.  </summary>
+    internal class ExecuteModule : IModule
 	{
-		private class Globals
-		{
-			public CommandEventArgs e;
-			public DiscordClient client;
-		}
 
         private readonly IApplicationEnvironment _dnxEnvironment;
         private readonly ILibraryExporter _libExporter;
@@ -54,12 +55,12 @@ namespace DiscordBot.Modules.Execute
 					.Parameter("code", ParameterType.Unparsed)
 					.Do(async e =>
 					{
-						var globals = new Globals { e = e, client = _client };
+						var globals = new ScriptGlobals { e = e, client = _client };
 						var text = e.Args[0].Trim('`'); //Remove code block tags
 
 						try
 						{
-							var script = CSharpScript.Create(text, options, typeof(Globals));
+							var script = CSharpScript.Create(text, options, typeof(ScriptGlobals));
 							var scriptState = await script.RunAsync(globals);
 							var returnValue = scriptState.ReturnValue;
 							if (returnValue != null)
@@ -76,12 +77,12 @@ namespace DiscordBot.Modules.Execute
 					.Parameter("code", ParameterType.Unparsed)
 					.Do(async e =>
 					{
-						var globals = new Globals { e = e, client = _client };
+						var globals = new ScriptGlobals { e = e, client = _client };
 						var text = e.Args[0].Trim('`'); //Remove code block tags
 
 						try
 						{
-							var script = CSharpScript.Create(text, options, typeof(Globals));
+							var script = CSharpScript.Create(text, options, typeof(ScriptGlobals));
 							await script.RunAsync(globals);
 						}
 						catch (Exception ex)
