@@ -187,7 +187,7 @@ namespace DiscordBot.Modules.Github
                                                 var date = new DateTimeOffset(commit["commit"]["committer"].Value<DateTime>("date").AddSeconds(1.0), TimeSpan.Zero);
                                                 //var url = commit.Value<string>("html_url");
 
-                                                _client.Log(LogSeverity.Info, "Github", $"{repo.Key} {branch} #{sha}");
+                                                _client.Log.Info("Github", $"{repo.Key} {branch} #{sha}");
 
                                                 string prefix = $"\n{Format.Code(sha)} ";
                                                 builder.Append($"{prefix}{Format.Escape(msg.Split('\n')[0])}");
@@ -239,7 +239,7 @@ namespace DiscordBot.Modules.Github
                                             skip = true;
                                             text = $"Updated {type} #{id}";
                                         }
-                                        _client.Log(LogSeverity.Info, "Github", $"{repo.Key} {text}");
+                                        _client.Log.Info("Github", $"{repo.Key} {text}");
                                         if (!skip)
                                         {
                                             try
@@ -266,7 +266,7 @@ namespace DiscordBot.Modules.Github
                             }
                             catch (Exception ex) when (!(ex is TaskCanceledException))
                             {
-                                _client.Log(LogSeverity.Error, "Github", ex.Message);
+                                _client.Log.Error("Github", ex);
                                 await Task.Delay(5000);
                                 continue;
                             }

@@ -154,7 +154,7 @@ namespace DiscordBot.Modules.Feeds
 
                                     foreach (var article in articles)
                                     {
-                                        _client.Log(LogSeverity.Info, "Feed", $"New article: {article.Title}");
+                                        _client.Log.Info("Feed", $"New article: {article.Title}");
                                         if (article.Link != null)
                                         {
                                             try
@@ -174,7 +174,7 @@ namespace DiscordBot.Modules.Feeds
                             }
                             catch (Exception ex) when (!(ex is TaskCanceledException))
                             {
-                                _client.Log(LogSeverity.Error, "Feed", ex.Message);
+                                _client.Log.Error("Feed", ex);
                             }
                         }
                     }

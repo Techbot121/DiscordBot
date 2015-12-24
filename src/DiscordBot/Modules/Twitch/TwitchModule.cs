@@ -171,14 +171,14 @@ namespace DiscordBot.Modules.Twitch
                                         {
                                             if (!isStreaming) //Now offline
                                             {
-                                                _client.Log(LogSeverity.Info, "Twitch", $"{twitchStream.Key} is no longer streaming.");
+                                                _client.Log.Info("Twitch", $"{twitchStream.Key} is no longer streaming.");
                                                 twitchStream.Value.IsStreaming = false;
                                                 twitchStream.Value.CurrentGame = null;
                                                 isChannelUpdated = true;
                                             }
                                             else if (lastSeenGame != currentGame) //Switched game
                                             {
-                                                _client.Log(LogSeverity.Info, "Twitch", $"{twitchStream.Key} is now streaming {currentGame}.");
+                                                _client.Log.Info("Twitch", $"{twitchStream.Key} is now streaming {currentGame}.");
                                                 twitchStream.Value.IsStreaming = true;
                                                 twitchStream.Value.CurrentGame = currentGame;
                                                 isChannelUpdated = true;
@@ -189,9 +189,9 @@ namespace DiscordBot.Modules.Twitch
                                             if (isStreaming) //Now online
                                             {
                                                 if (currentGame != null)
-                                                    _client.Log(LogSeverity.Info, "Twitch", $"{twitchStream.Key} has started streaming {currentGame}.");
+                                                    _client.Log.Info("Twitch", $"{twitchStream.Key} has started streaming {currentGame}.");
                                                 else
-                                                    _client.Log(LogSeverity.Info, "Twitch", $"{twitchStream.Key} has started streaming.");
+                                                    _client.Log.Info("Twitch", $"{twitchStream.Key} has started streaming.");
                                                 await _client.SendMessage(channel, Format.Escape($"{twitchStream.Key} is now live (http://www.twitch.tv/{twitchStream.Key})."));
                                                 twitchStream.Value.IsStreaming = true;
                                                 twitchStream.Value.CurrentGame = currentGame;
@@ -201,7 +201,7 @@ namespace DiscordBot.Modules.Twitch
                                     }
                                     catch (Exception ex)
                                     {
-                                        _client.Log(LogSeverity.Error, "Twitch", ex.Message);
+                                        _client.Log.Error("Twitch", ex);
                                         await Task.Delay(5000);
                                         continue;
                                     }
@@ -231,11 +231,12 @@ namespace DiscordBot.Modules.Twitch
                                 {
                                     try
                                     {
-                                        await _client.StatusAPI.Send(new UpdateMessageRequest(channelSettings.Key, channelSettings.Value.StickyMessageId.Value) { Content = text, MentionedUserIds = new ulong[0] });
+                                        await _client.StatusAPI.Send(
+                                            new UpdateMessageRequest(channelSettings.Key, channelSettings.Value.StickyMessageId.Value) { Content = text });
                                     }
                                     catch (HttpException)
                                     {
-                                        _client.Log(LogSeverity.Error, "Twitch", "Failed to edit message.");
+                                        _client.Log.Error("Twitch", "Failed to edit message.");
                                         channelSettings.Value.StickyMessageId = null;
                                     }
                                 }
