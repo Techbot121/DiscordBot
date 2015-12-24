@@ -13,9 +13,7 @@ namespace DiscordBot.Modules.Feeds
 
 		public ConcurrentDictionary<string, Feed> Feeds = new ConcurrentDictionary<string, Feed>();
 		public bool AddFeed(string url, ulong channelId)
-		{
-			return Feeds.TryAdd(url, new Feed { ChannelId = channelId });
-		}
+            => Feeds.TryAdd(url, new Feed { ChannelId = channelId });
 		public bool RemoveFeed(string url)
 		{
 			Feed ignored;

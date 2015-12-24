@@ -45,9 +45,7 @@ namespace DiscordBot.Modules.Github
 
 		public ConcurrentDictionary<string, Repo> Repos = new ConcurrentDictionary<string, Repo>();
 		public bool AddRepo(string repo, ulong channelId)
-		{
-			return Repos.TryAdd(repo, new Repo(channelId));
-		}
+            => Repos.TryAdd(repo, new Repo(channelId));
 		public bool RemoveRepo(string repo)
 		{
 			Repo ignored;

@@ -39,9 +39,7 @@ namespace DiscordBot.Modules.Twitch
 		private ConcurrentDictionary<ulong, Channel> _channels = new ConcurrentDictionary<ulong, Channel>();
 		public IEnumerable<KeyValuePair<ulong, Channel>> Channels { get { return _channels; } set { _channels = new ConcurrentDictionary<ulong, Channel>(value); } }
 		public Channel GetOrAddChannel(ulong channelId)
-		{
-			return _channels.GetOrAdd(channelId, x => new Channel());
-		}
+            => _channels.GetOrAdd(channelId, x => new Channel());
 		public void RemoveChannel(ulong channelId)
 		{
 			Channel ignored;

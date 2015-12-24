@@ -101,9 +101,7 @@ namespace DiscordBot.Modules.Colors
 		}
 
 		private IEnumerable<Role> GetOtherRoles(User user)
-		{
-			return user.Roles.Where(x => !_colorMap.ContainsKey(x.Name.ToLowerInvariant()));
-		}
+            => user.Roles.Where(x => !_colorMap.ContainsKey(x.Name.ToLowerInvariant()));
 
 		private async Task SetColor(CommandEventArgs e, User user, string colorName)
 		{
