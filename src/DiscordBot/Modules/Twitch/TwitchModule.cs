@@ -208,7 +208,7 @@ namespace DiscordBot.Modules.Twitch
                                 }
                             } //Stream Loop
 
-                            if (channelSettings.Value.UseSticky && (isChannelUpdated || channelSettings.Value.StickyMessageId == null))
+                            /*if (channelSettings.Value.UseSticky && (isChannelUpdated || channelSettings.Value.StickyMessageId == null))
                             {
                                 //Build the sticky post
                                 builder.Clear();
@@ -257,7 +257,7 @@ namespace DiscordBot.Modules.Twitch
                                         await _client.DeleteMessage(message);
                                 }
                                 catch (HttpException) { }
-                            }
+                            }*/
                             isServerUpdated |= isChannelUpdated;
                         } //Channel Loop
                         if (isServerUpdated)
