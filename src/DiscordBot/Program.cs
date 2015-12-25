@@ -29,7 +29,6 @@ namespace DiscordBot
                 AppName = "DiscordBot",
                 AppVersion = DiscordConfig.LibVersion,
                 LogLevel = LogSeverity.Verbose,
-                UseLargeThreshold = true,
                 MessageCacheSize = 0,
                 UsePermissionsCache = false
             });
@@ -132,6 +131,7 @@ namespace DiscordBot
             modules.Install(new Modules.Modules.ModulesModule(), "Modules", FilterType.Unrestricted);
             modules.Install(new Modules.Public.PublicModule(), "Public", FilterType.Unrestricted);
             modules.Install(new Modules.Twitch.TwitchModule(), "Twitch", FilterType.ServerWhitelist);
+            modules.Install(new Modules.Protect.ProtectModule(), "Protect", FilterType.ServerWhitelist);
 
 #if PRIVATE
             PrivateModules.Install(_client);
@@ -152,7 +152,7 @@ namespace DiscordBot
                     catch (Exception ex)
                     {
                         _client.Log.Error($"Login Failed", ex);
-                        await Task.Delay(5000);
+                        await Task.Delay(_client.Config.FailedReconnectDelay);
                     }
                 }
             });
