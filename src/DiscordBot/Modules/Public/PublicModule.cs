@@ -1,7 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.Commands.Permissions.Levels;
-using Discord.Legacy;
 using Discord.Modules;
 using System;
 using System.Linq;
@@ -36,7 +35,7 @@ namespace DiscordBot.Modules.Public
 							return;
 						}
 
-						await _client.AcceptInvite(invite);
+						await invite.Accept();
 						await _client.Reply(e, $"Joined server.");
 					});
 				group.CreateCommand("leave")
@@ -46,20 +45,20 @@ namespace DiscordBot.Modules.Public
 					.Do(async e =>
 					{
 						await _client.Reply(e, $"Leaving~");
-						await _client.LeaveServer(e.Server);
+						await e.Server.Leave();
 					});
 
 				group.CreateCommand("say")
 					.Parameter("Text", ParameterType.Unparsed)
 					.Do(async e =>
 					{
-						await _client.SendMessage(e.Channel, e.Message.Resolve(Format.Escape(e.Args[0])));
+						await e.Channel.SendMessage(e.Message.Resolve(Format.Escape(e.Args[0])));
 					});
 				group.CreateCommand("sayraw")
 					.Parameter("Text", ParameterType.Unparsed)
 					.Do(async e =>
 					{
-						await _client.SendMessage(e.Channel, e.Args[0]);
+						await e.Channel.SendMessage(e.Args[0]);
 					});
 
 				group.CreateCommand("whoami")
@@ -71,7 +70,7 @@ namespace DiscordBot.Modules.Public
 					.Parameter("User name")
 					.Do(async e =>
 					{
-						User user = _client.FindUsers(e.Server, e.Args[0]).FirstOrDefault();
+						User user = e.Server.FindUsers(e.Args[0]).FirstOrDefault();
 						await Whois(e, user);
 					});
 

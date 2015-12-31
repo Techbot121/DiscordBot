@@ -43,7 +43,7 @@ namespace DiscordBot
 			
 			var response = await _http.SendAsync(msg, HttpCompletionOption.ResponseContentRead);
 			if (!response.IsSuccessStatusCode)
-				throw new HttpException(response.StatusCode);
+				 throw new HttpException(response.StatusCode);
 			return response.Content;
         }
 	}

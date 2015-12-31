@@ -1,7 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.Commands.Permissions.Levels;
-using Discord.Legacy;
 using Discord.Modules;
 using Discord.Net;
 using DiscordBot.Services;
@@ -200,7 +199,7 @@ namespace DiscordBot.Modules.Github
                                             }
                                             try
                                             {
-                                                await _client.SendMessage(channel, builder.ToString());
+                                                await channel.SendMessage(builder.ToString());
                                             }
                                             catch (HttpException ex) when (ex.StatusCode == HttpStatusCode.Forbidden) { }
                                         }
@@ -244,7 +243,7 @@ namespace DiscordBot.Modules.Github
                                         {
                                             try
                                             {
-                                                await _client.SendMessage(_client.GetChannel(repo.Value.ChannelId), $"{Format.Bold(repo.Key)} {text}\n{Format.Escape(url)}");
+                                                await channel.SendMessage($"{Format.Bold(repo.Key)} {text}\n{Format.Escape(url)}");
                                             }
                                             catch (HttpException ex) when (ex.StatusCode == HttpStatusCode.Forbidden) { }
                                         }

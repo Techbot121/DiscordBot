@@ -36,12 +36,11 @@
 	},
 
 	"dependencies": {
-		"Discord.Net": "0.9.0-alpha1",
-		"Discord.Net.Audio": "0.9.0-alpha1",
-		"Discord.Net.Commands": "0.9.0-alpha1",
-		"Discord.Net.Modules": "0.9.0-alpha1",
+		"Discord.Net": "0.9.0-alpha2",
+		"Discord.Net.Audio": "0.9.0-alpha2",
+		"Discord.Net.Commands": "0.9.0-alpha2",
+		"Discord.Net.Modules": "0.9.0-alpha2",
 		"Newtonsoft.Json": "7.0.1",
-		"NAudio": "1.7.3",
 		"Microsoft.CodeAnalysis.CSharp": "1.1.0-rc1-20151109-01",
 		"Microsoft.CodeAnalysis.CSharp.Scripting": "1.1.0-rc1-20151109-01",
 		"Microsoft.Dnx.Compilation.Abstractions": "1.0.0-rc1-final",
@@ -49,18 +48,27 @@
 		"Microsoft.Dnx.Compilation.CSharp.Abstractions": "1.0.0-rc1-final"
 	},
 
-	"frameworks": {
-		"dnx46": {
-			"frameworkAssemblies": {
-				"System.Collections": "4.0.10.0",
-				"System.IO": "4.0.0.0",
-				"System.Net.Http": "4.0.0.0",
-				"System.Reflection": "4.0.10.0",
-				"System.Runtime": "4.0.20.0",
-				"System.Threading.Tasks": "4.0.10.0",
-				"System.Xml": "4.0.0.0",
-				"System.Xml.Linq": "4.0.0.0"
-			}
-		}
-	}
+  "frameworks": {
+    "dnx46": {
+      "frameworkAssemblies": {
+        "System.Collections": "4.0.10.0",
+        "System.IO": "4.0.0.0",
+        "System.Net.Http": "4.0.0.0",
+        "System.Reflection": "4.0.10.0",
+        "System.Runtime": "4.0.20.0",
+        "System.Threading.Tasks": "4.0.10.0",
+        "System.Xml": "4.0.0.0",
+        "System.Xml.Linq": "4.0.0.0"
+      },
+      "dependencies": {
+        "NAudio": "1.7.3"
+      }
+    },
+    "dnxcore50": {
+      "dependencies": {
+        "System.Xml.XDocument": "4.0.11-beta-23516",
+        "System.Net.Http": "4.0.1-beta-23516"
+      }
+    }
+  }
 }

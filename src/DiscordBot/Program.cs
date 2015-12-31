@@ -26,13 +26,16 @@ namespace DiscordBot
             //Set up the base client itself with no voice and small message queues
             _client = new DiscordClient(new DiscordConfig
             {
-                AppName = "DiscordBot",
+                AppName = "VoltBot",
+                AppUrl = "https://github.com/RogueException/DiscordBot",
                 AppVersion = DiscordConfig.LibVersion,
-                LogLevel = LogSeverity.Verbose,
+                LogLevel = LogSeverity.Info,
                 MessageCacheSize = 0,
                 UsePermissionsCache = false
             });
+#if !DNXCORE50
             Console.Title = $"{_client.Config.AppName} v{_client.Config.AppVersion} (Discord.Net v{DiscordConfig.LibVersion})";
+#endif
             _client.Log.Message += (s, e) => WriteLog(e);
 
             //Add a whitelist service so the bot only responds to commands from us or the people we choose
@@ -112,8 +115,8 @@ namespace DiscordBot
 
             _client.Services.Add(new AudioService(new AudioServiceConfig
             {
-                Mode = AudioMode.Both,
-                EnableMultiserver = true,
+                Mode = AudioMode.Outgoing,
+                EnableMultiserver = false,
                 EnableEncryption = true,
                 Bitrate = 512,
             }));
@@ -146,7 +149,7 @@ namespace DiscordBot
                     try
                     {
                         await _client.Connect(GlobalSettings.Discord.Email, GlobalSettings.Discord.Password);
-                        await _client.SetGame("Discord.Net");
+                        _client.SetGame("Discord.Net");
                         break;
                     }
                     catch (Exception ex)
@@ -220,14 +223,14 @@ namespace DiscordBot
             }
 
             text = builder.ToString();
-            if (e.Severity <= LogSeverity.Info)
-            {
-                Console.ForegroundColor = color;
-                Console.WriteLine(text);
-            }
-#if DEBUG
+            //if (e.Severity <= LogSeverity.Info)
+            //{
+            Console.ForegroundColor = color;
+            Console.WriteLine(text);
+            //}
+/*#if DEBUG
             System.Diagnostics.Debug.WriteLine(text);
-#endif
+#endif*/
         }
     }
 }

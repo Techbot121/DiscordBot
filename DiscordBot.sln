@@ -45,9 +45,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DiscordBot", "DiscordBot", 
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Discord.Net.Audio", "..\Discord.Net\src\Discord.Net.Audio\Discord.Net.Audio.xproj", "{DFF7AFE3-CA77-4109-BADE-B4B49A4F6648}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Discord.Net.Audio", "..\Discord.Net\src\Discord.Net.Audio.Net5\Discord.Net.Audio.csproj", "{7BFEF748-B934-4621-9B11-6302E3A9F6B3}"
-EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Discord.Net.Shared", "..\Discord.Net\src\Discord.Net.Shared\Discord.Net.Shared.shproj", "{2875DEB5-F248-4105-8EA2-5141E3DE8025}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Discord.Net.Audio", "..\Discord.Net\src\Discord.Net.Audio.Net45\Discord.Net.Audio.csproj", "{7BFEF748-B934-4621-9B11-6302E3A9F6B3}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -117,14 +117,14 @@ Global
 		{855D6B1D-847B-42DA-BE6A-23683EA89511}.TestResponses|Any CPU.Build.0 = Debug|Any CPU
 		{8D71A857-879A-4A10-859E-5FF824ED6688}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8D71A857-879A-4A10-859E-5FF824ED6688}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8D71A857-879A-4A10-859E-5FF824ED6688}.PrivateDebug|Any CPU.ActiveCfg = FullDebug|Any CPU
-		{8D71A857-879A-4A10-859E-5FF824ED6688}.PrivateDebug|Any CPU.Build.0 = FullDebug|Any CPU
+		{8D71A857-879A-4A10-859E-5FF824ED6688}.PrivateDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D71A857-879A-4A10-859E-5FF824ED6688}.PrivateDebug|Any CPU.Build.0 = Debug|Any CPU
 		{8D71A857-879A-4A10-859E-5FF824ED6688}.PrivateRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{8D71A857-879A-4A10-859E-5FF824ED6688}.PrivateRelease|Any CPU.Build.0 = Release|Any CPU
 		{8D71A857-879A-4A10-859E-5FF824ED6688}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8D71A857-879A-4A10-859E-5FF824ED6688}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8D71A857-879A-4A10-859E-5FF824ED6688}.TestResponses|Any CPU.ActiveCfg = FullDebug|Any CPU
-		{8D71A857-879A-4A10-859E-5FF824ED6688}.TestResponses|Any CPU.Build.0 = FullDebug|Any CPU
+		{8D71A857-879A-4A10-859E-5FF824ED6688}.TestResponses|Any CPU.ActiveCfg = TestResponses|Any CPU
+		{8D71A857-879A-4A10-859E-5FF824ED6688}.TestResponses|Any CPU.Build.0 = TestResponses|Any CPU
 		{01584E8A-78DA-486F-9EF9-A894E435841B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{01584E8A-78DA-486F-9EF9-A894E435841B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{01584E8A-78DA-486F-9EF9-A894E435841B}.PrivateDebug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -163,8 +163,8 @@ Global
 		{7BFEF748-B934-4621-9B11-6302E3A9F6B3}.PrivateRelease|Any CPU.Build.0 = Release|Any CPU
 		{7BFEF748-B934-4621-9B11-6302E3A9F6B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7BFEF748-B934-4621-9B11-6302E3A9F6B3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7BFEF748-B934-4621-9B11-6302E3A9F6B3}.TestResponses|Any CPU.ActiveCfg = Debug|Any CPU
-		{7BFEF748-B934-4621-9B11-6302E3A9F6B3}.TestResponses|Any CPU.Build.0 = Debug|Any CPU
+		{7BFEF748-B934-4621-9B11-6302E3A9F6B3}.TestResponses|Any CPU.ActiveCfg = Release|Any CPU
+		{7BFEF748-B934-4621-9B11-6302E3A9F6B3}.TestResponses|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -185,7 +185,7 @@ Global
 		{27503534-BE9A-4B36-9BA8-B2B431DEE495} = {1BE8AF3F-3CFD-433F-A380-D294A4F617C1}
 		{36E4343D-3C79-4D33-8327-E13EF4C757BB} = {1BE8AF3F-3CFD-433F-A380-D294A4F617C1}
 		{DFF7AFE3-CA77-4109-BADE-B4B49A4F6648} = {EA68EBE2-51C8-4440-9EF7-D633C90A5D35}
-		{7BFEF748-B934-4621-9B11-6302E3A9F6B3} = {B47C4063-C4EB-46AA-886D-B868DA1BF0A0}
 		{2875DEB5-F248-4105-8EA2-5141E3DE8025} = {B47C4063-C4EB-46AA-886D-B868DA1BF0A0}
+		{7BFEF748-B934-4621-9B11-6302E3A9F6B3} = {B47C4063-C4EB-46AA-886D-B868DA1BF0A0}
 	EndGlobalSection
 EndGlobal

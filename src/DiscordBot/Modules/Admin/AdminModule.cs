@@ -34,7 +34,7 @@ namespace DiscordBot.Modules.Admin
 						var user = await _client.FindUser(e, e.Args[0], e.Args[1]);
 						if (user == null) return;
 
-						await _client.KickUser(user);
+                        await user.Kick();
 						await _client.Reply(e, $"Kicked user {user.Name}.");
 					});
 				group.CreateCommand("ban")
@@ -47,7 +47,7 @@ namespace DiscordBot.Modules.Admin
 						var user = await _client.FindUser(e, e.Args[0], e.Args[1]);
 						if (user == null) return;
 
-						await _client.BanUser(user);
+                        await user.Server.Ban(user);
 						await _client.Reply(e, $"Banned user {user.Name}.");
 					});
 
@@ -60,7 +60,7 @@ namespace DiscordBot.Modules.Admin
 						var user = await _client.FindUser(e, e.Args[0], e.Args[1]);
 						if (user == null) return;
 
-						await _client.EditUser(user, isMuted: true);
+						await user.Edit(isMuted: true);
 						await _client.Reply(e, $"Muted user {user.Name}.");
 					});
 				group.CreateCommand("unmute")
@@ -72,7 +72,7 @@ namespace DiscordBot.Modules.Admin
 						var user = await _client.FindUser(e, e.Args[0], e.Args[1]);
 						if (user == null) return;
 
-						await _client.EditUser(user, isMuted: false);
+						await user.Edit(isMuted: false);
 						await _client.Reply(e, $"Unmuted user {user.Name}.");
 					});
 				group.CreateCommand("deafen")
@@ -84,7 +84,7 @@ namespace DiscordBot.Modules.Admin
 						var user = await _client.FindUser(e, e.Args[0], e.Args[1]);
 						if (user == null) return;
 
-						await _client.EditUser(user, isDeafened: true);
+						await user.Edit(isDeafened: true);
 						await _client.Reply(e, $"Deafened user {user.Name}.");
 					});
 				group.CreateCommand("undeafen")
@@ -96,7 +96,7 @@ namespace DiscordBot.Modules.Admin
 						var user = await _client.FindUser(e, e.Args[0], e.Args[1]);
 						if (user == null) return;
 
-						await _client.EditUser(user, isDeafened: false);
+						await user.Edit(isDeafened: false);
 						await _client.Reply(e, $"Undeafened user {user.Name}.");
 					});
 
@@ -121,16 +121,17 @@ namespace DiscordBot.Modules.Admin
 						IEnumerable<Message> msgs;
 						var cachedMsgs = e.Channel.Messages;
 						if (cachedMsgs.Count() < count)
-							msgs = (await _client.DownloadMessages(e.Channel, count));
+							msgs = (await e.Channel.DownloadMessages(count));
 						else
-							msgs = e.Channel.Messages/*.Where(x => x.User == e.User)*/.OrderByDescending(x => x.Timestamp).Take(count);
+							msgs = e.Channel.Messages.OrderByDescending(x => x.Timestamp).Take(count);
 
 						if (username != "")
 							msgs = msgs.Where(x => users.Contains(x.User));
 
 						if (msgs.Any())
 						{
-							await _client.DeleteMessages(msgs);
+                            foreach (var msg in msgs)
+                                await msg.Delete();
 							await _client.Reply(e, $"Cleaned up {msgs.Count()} messages.");
 						}
 						else

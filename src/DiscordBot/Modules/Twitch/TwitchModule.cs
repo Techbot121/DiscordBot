@@ -115,7 +115,8 @@ namespace DiscordBot.Modules.Twitch
                             var channelSettings = settings.GetOrAddChannel(channel.Id);
                             if (channelSettings.UseSticky && !value && channelSettings.StickyMessageId != null)
                             {
-                                try { await _client.DeleteMessage(channel.GetMessage(channelSettings.StickyMessageId.Value)); }
+                                var msg = channel.GetMessage(channelSettings.StickyMessageId.Value);
+                                try { await msg.Delete(); }
                                 catch (HttpException ex) when (ex.StatusCode == HttpStatusCode.NotFound) { }
                             }
                             channelSettings.UseSticky = value;
@@ -192,7 +193,7 @@ namespace DiscordBot.Modules.Twitch
                                                     _client.Log.Info("Twitch", $"{twitchStream.Key} has started streaming {currentGame}.");
                                                 else
                                                     _client.Log.Info("Twitch", $"{twitchStream.Key} has started streaming.");
-                                                await _client.SendMessage(channel, Format.Escape($"{twitchStream.Key} is now live (http://www.twitch.tv/{twitchStream.Key})."));
+                                                await channel.SendMessage(Format.Escape($"{twitchStream.Key} is now live (http://www.twitch.tv/{twitchStream.Key})."));
                                                 twitchStream.Value.IsStreaming = true;
                                                 twitchStream.Value.CurrentGame = currentGame;
                                                 isChannelUpdated = true;

@@ -4,9 +4,7 @@ using Discord.Legacy;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace DiscordBot
@@ -20,9 +18,9 @@ namespace DiscordBot
 			if (text != null)
 			{
 				if (!channel.IsPrivate)
-					await client.SendMessage(channel, $"{user.Name}: {text}");
+					await channel.SendMessage($"{user.Name}: {text}");
 				else
-					await client.SendMessage(channel, text);
+					await channel.SendMessage(text);
 			}
 		}
 		public static Task Reply<T>(this DiscordClient client, CommandEventArgs e, string prefix, T obj)
@@ -54,10 +52,10 @@ namespace DiscordBot
 		{
 			IEnumerable<User> users;
 			if (discriminator == "")
-				users = client.FindUsers(e.Server, username);
+				users = e.Server.FindUsers(username);
 			else
 			{
-				var user = client.GetUser(e.Server, username, ushort.Parse(discriminator));
+				var user = e.Server.GetUser(username, ushort.Parse(discriminator));
 				if (user == null)
 					users = Enumerable.Empty<User>();
 				else
@@ -91,7 +89,7 @@ namespace DiscordBot
 
 		public static async Task<User> GetUser(this DiscordClient client, CommandEventArgs e, ulong userId)
 		{
-			var user = client.GetUser(e.Server, userId);
+			var user = e.Server.GetUser(userId);
 
 			if (user == null)
 			{
@@ -103,7 +101,7 @@ namespace DiscordBot
 		
 		public static async Task<Channel> FindChannel(this DiscordClient client, CommandEventArgs e, string name, ChannelType type = null)
 		{
-			var channels = client.FindChannels(e.Server, name, type);
+			var channels = e.Server.FindChannels(name, type);
 
 			int count = channels.Count();
 			if (count == 0)

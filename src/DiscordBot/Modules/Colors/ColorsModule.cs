@@ -1,7 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.Commands.Permissions.Levels;
-using Discord.Legacy;
 using Discord.Modules;
 using System.Collections.Generic;
 using System.Linq;
@@ -79,7 +78,7 @@ namespace DiscordBot.Modules.Colors
 					.Description("Sets another user's name to a custom color.")
 					.Do(e =>
 					{
-						User user = _client.FindUsers(e.Server, e.Args[0]).FirstOrDefault();
+						User user = e.Server.FindUsers(e.Args[0]).FirstOrDefault();
 						if (user == null)
 							return _client.ReplyError(e, "Unknown user");
 						return SetColor(e, user, e.Args[1]);
@@ -94,7 +93,7 @@ namespace DiscordBot.Modules.Colors
 							return;
 						}
 						var otherRoles = GetOtherRoles(e.User);
-						await _client.EditUser(e.User, roles: otherRoles);
+						await e.User.Edit(roles: otherRoles);
 						await _client.Reply(e, $"Reset username color.");
 					});
             });
@@ -119,11 +118,11 @@ namespace DiscordBot.Modules.Colors
 			Role role = e.Server.Roles.Where(x => x.Name == color.Name).FirstOrDefault();
 			if (role == null)
 			{
-				role = await _client.CreateRole(e.Server, color.Name);
-				await _client.EditRole(role, permissions: ServerPermissions.None, color: color.Color);
+				role = await e.Server.CreateRole(color.Name);
+				await role.Edit(permissions: ServerPermissions.None, color: color.Color);
 			}
 			var otherRoles = GetOtherRoles(user);
-			await _client.EditUser(user, roles: otherRoles.Concat(new Role[] { role }));
+			await user.Edit(roles: otherRoles.Concat(new Role[] { role }));
 			await _client.Reply(e, $"Set {user.Name}'s color to {color.Name}");
 		}
 	}
