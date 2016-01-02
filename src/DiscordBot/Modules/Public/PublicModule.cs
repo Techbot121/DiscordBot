@@ -29,7 +29,12 @@ namespace DiscordBot.Modules.Public
 					.Do(async e =>
 					{
 						var invite = await _client.GetInvite(e.Args[0]);
-						if (invite.IsRevoked)
+                        if (invite == null)
+                        {
+                            await _client.Reply(e, $"Invite not found.");
+                            return;
+                        }
+						else if (invite.IsRevoked)
 						{
 							await _client.Reply(e, $"This invite has expired or the bot is banned from that server.");
 							return;
