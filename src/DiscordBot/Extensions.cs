@@ -1,6 +1,5 @@
 ﻿using Discord;
 using Discord.Commands;
-using Discord.Legacy;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

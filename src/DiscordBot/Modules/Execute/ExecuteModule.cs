@@ -46,7 +46,7 @@ namespace DiscordBot.Modules.Execute
 				.AddReferences(references.Select(x => ConvertMetadataReference(x)))
 				.AddImports("System.Collections.Generic", "System.Linq");
 
-			manager.CreateCommands("", group =>
+            manager.CreateCommands("", group =>
 			{
 				group.MinPermissions((int)PermissionLevel.BotOwner);
 
@@ -113,7 +113,7 @@ namespace DiscordBot.Modules.Execute
 					return AssemblyMetadata.Create(moduleMetadata).GetReference(filePath: fileMetadataReference.Path);
 				}
 			}
-
+            
 			var projectReference = metadataReference as IMetadataProjectReference;
 			if (projectReference != null)
 			{
@@ -124,7 +124,7 @@ namespace DiscordBot.Modules.Execute
 				}
 			}
 
-			throw new NotSupportedException();
+            throw new NotSupportedException();
 		}
 	}
 }
