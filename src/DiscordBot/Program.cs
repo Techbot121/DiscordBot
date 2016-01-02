@@ -29,7 +29,7 @@ namespace DiscordBot
                 AppName = "VoltBot",
                 AppUrl = "https://github.com/RogueException/DiscordBot",
                 AppVersion = DiscordConfig.LibVersion,
-                LogLevel = LogSeverity.Info,
+                LogLevel = LogSeverity.Verbose,
                 MessageCacheSize = 0,
                 UsePermissionsCache = false
             });
@@ -111,7 +111,7 @@ namespace DiscordBot
             };
 
             //Log to the console whenever someone uses a command
-            commands.RanCommand += (s, e) => _client.Log.Info("Command", $"{e.User.Name}: {e.Command.Text}");
+            commands.Command += (s, e) => _client.Log.Info("Command", $"{e.User.Name}: {e.Command.Text}");
 
             _client.Services.Add(new AudioService(new AudioServiceConfig
             {
@@ -134,8 +134,7 @@ namespace DiscordBot
             modules.Install(new Modules.Modules.ModulesModule(), "Modules", FilterType.Unrestricted);
             modules.Install(new Modules.Public.PublicModule(), "Public", FilterType.Unrestricted);
             modules.Install(new Modules.Twitch.TwitchModule(), "Twitch", FilterType.ServerWhitelist);
-            modules.Install(new Modules.Protect.ProtectModule(), "Protect", FilterType.ServerWhitelist);
-
+            
 #if PRIVATE
             PrivateModules.Install(_client);
 #endif
