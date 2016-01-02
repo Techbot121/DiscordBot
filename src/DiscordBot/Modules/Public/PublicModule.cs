@@ -136,6 +136,8 @@ namespace DiscordBot.Modules.Public
             => ".Net Framework 4.6";
 #elif NET461
             => ".Net Framework 4.6.1";
+#elif NETCORE50
+            => ".Net Core 5.0";
 #elif DNX11
             => "DNX (.Net Framework 1.1)";
 #elif DNX20
