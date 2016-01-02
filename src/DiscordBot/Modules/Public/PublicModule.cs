@@ -80,8 +80,8 @@ namespace DiscordBot.Modules.Public
                         await Whois(e, user);
                     });
 
-                group.CreateCommand("about")
-                    .Alias("info")
+                group.CreateCommand("info")
+                    .Alias("about")
                     .Do(async e =>
                     {
                         await e.Channel.SendMessage(
