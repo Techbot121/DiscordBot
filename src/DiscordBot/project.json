@@ -35,18 +35,18 @@
 		}
 	},
 
-	"dependencies": {
-		"Discord.Net": "0.9.0-alpha2",
-		"Discord.Net.Audio": "0.9.0-alpha2",
-		"Discord.Net.Commands": "0.9.0-alpha2",
-		"Discord.Net.Modules": "0.9.0-alpha2",
-		"Newtonsoft.Json": "7.0.1",
-		"Microsoft.CodeAnalysis.CSharp": "1.1.0-rc1-20151109-01",
-		"Microsoft.CodeAnalysis.CSharp.Scripting": "1.1.0-rc1-20151109-01",
-		"Microsoft.Dnx.Compilation.Abstractions": "1.0.0-rc1-final",
-		"Microsoft.AspNet.Hosting": "1.0.0-rc1-final",
-		"Microsoft.Dnx.Compilation.CSharp.Abstractions": "1.0.0-rc1-final"
-	},
+  "dependencies": {
+    "Discord.Net": "0.9.0-alpha2",
+    "Discord.Net.Audio": "0.9.0-alpha2",
+    "Discord.Net.Commands": "0.9.0-alpha2",
+    "Discord.Net.Modules": "0.9.0-alpha2",
+    "Newtonsoft.Json": "8.0.1",
+    "Microsoft.CodeAnalysis.CSharp": "1.1.1",
+    "Microsoft.CodeAnalysis.CSharp.Scripting": "1.1.1",
+    "Microsoft.AspNet.Hosting": "1.0.0-rc1-final",
+    "Microsoft.Dnx.Compilation.Abstractions": "1.0.0-rc1-final",
+    "Microsoft.Dnx.Compilation.CSharp.Abstractions": "1.0.0-rc1-final"
+  },
 
   "frameworks": {
     "dnx46": {
