@@ -222,6 +222,7 @@ namespace DiscordBot.Modules.Github
                                         var createdAt = issue.Value<DateTime>("created_at");
                                         var updatedAt = issue.Value<DateTime>("updated_at");
                                         var closedAt = issue.Value<DateTime?>("closed_at");
+                                        var title = issue.Value<string>("title");
 
                                         string text;
                                         bool skip = false;
@@ -238,6 +239,9 @@ namespace DiscordBot.Modules.Github
                                             skip = true;
                                             text = $"Updated {type} #{id}";
                                         }
+                                        if (!string.IsNullOrEmpty(title))
+                                            text += '\n' + title;
+
                                         _client.Log.Info("Github", $"{repo.Key} {text}");
                                         if (!skip)
                                         {
@@ -273,7 +277,7 @@ namespace DiscordBot.Modules.Github
                             await Task.Delay(1000, cancelToken); //Wait 1 second between individual requests
                         }
                     }
-                    await Task.Delay(5000 * 60, cancelToken); //Wait 5 minutes between full updates
+                    await Task.Delay(60000, cancelToken); //Wait 1 minute between full updates
                 }
             }
             catch (TaskCanceledException) { }
