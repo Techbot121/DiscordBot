@@ -9,7 +9,10 @@
 		"type": "git",
 		"url": "git://github.com/RogueException/DiscordBot"
 	},
-	"exclude": [ "config" ],
+  "exclude": [ "config" ],
+  "compilationOptions": {
+    "emitEntryPoint": true
+  },
 
 	"commands": {
 		"start": "DiscordBot"
@@ -40,23 +43,13 @@
     "Discord.Net.Audio": "0.9.0-alpha2",
     "Discord.Net.Commands": "0.9.0-alpha2",
     "Discord.Net.Modules": "0.9.0-alpha2",
-    "Newtonsoft.Json": "8.0.1",
-    "Microsoft.CodeAnalysis.CSharp": "1.1.1",
-    "Microsoft.CodeAnalysis.CSharp.Scripting": "1.1.1",
-    "Microsoft.AspNet.Hosting": "1.0.0-rc1-final",
-    "Microsoft.Dnx.Compilation.Abstractions": "1.0.0-rc1-final",
-    "Microsoft.Dnx.Compilation.CSharp.Abstractions": "1.0.0-rc1-final"
+    "Newtonsoft.Json": "8.0.1"
   },
 
   "frameworks": {
-    "dnx46": {
+    "dnx451": {
       "frameworkAssemblies": {
-        "System.Collections": "4.0.10.0",
-        "System.IO": "4.0.0.0",
         "System.Net.Http": "4.0.0.0",
-        "System.Reflection": "4.0.10.0",
-        "System.Runtime": "4.0.20.0",
-        "System.Threading.Tasks": "4.0.10.0",
         "System.Xml": "4.0.0.0",
         "System.Xml.Linq": "4.0.0.0"
       },
@@ -66,6 +59,7 @@
     },
     "dnxcore50": {
       "dependencies": {
+        "System.Console": "4.0.0-beta-23516",
         "System.Diagnostics.Process": "4.1.0-beta-23516",
         "System.Net.Http": "4.0.1-beta-23516",
         "System.Xml.XDocument": "4.0.11-beta-23516"

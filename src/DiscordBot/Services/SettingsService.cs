@@ -31,8 +31,12 @@ namespace DiscordBot.Services
 			if (_servers.TryAdd(id, settings))
 				return SaveServerList();
 			else
-				return Task.CompletedTask;
-		}
+#if DNX451
+                return Task.Delay(0);
+#else
+                return Task.CompletedTask;
+#endif
+        }
 		public bool RemoveServer(ulong id)
 		{
 			SettingsT settings;

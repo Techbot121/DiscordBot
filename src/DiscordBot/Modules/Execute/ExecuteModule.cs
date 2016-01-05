@@ -1,4 +1,4 @@
-﻿using Discord;
+﻿/*using Discord;
 using Discord.Commands;
 using Discord.Commands.Permissions.Levels;
 using Discord.Modules;
@@ -128,3 +128,4 @@ namespace DiscordBot.Modules.Execute
 		}
 	}
 }
+*/
