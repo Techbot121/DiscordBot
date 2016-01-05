@@ -41,12 +41,12 @@ namespace DiscordBot.Modules.Modules
 							_client.ReplyError(e, "Unknown module");
 							return;
 						}
-						if (module.FilterType == FilterType.Unrestricted || module.FilterType == FilterType.AllowPrivate)
+						if (module.FilterType == ModuleFilter.None || module.FilterType == ModuleFilter.AlwaysAllowPrivate)
 						{
 							_client.ReplyError(e, "This module is global and cannot be enabled/disabled.");
 							return;
 						}
-						if (!module.FilterType.HasFlag(FilterType.ServerWhitelist))
+						if (!module.FilterType.HasFlag(ModuleFilter.ServerWhitelist))
 						{
 							_client.ReplyError(e, "This module doesn't support being enabled for servers.");
 							return;
@@ -71,12 +71,12 @@ namespace DiscordBot.Modules.Modules
 							_client.ReplyError(e, "Unknown module");
 							return;
 						}
-						if (module.FilterType == FilterType.Unrestricted || module.FilterType == FilterType.AllowPrivate)
+						if (module.FilterType == ModuleFilter.None || module.FilterType == ModuleFilter.AlwaysAllowPrivate)
 						{
 							_client.ReplyError(e, "This module is global and cannot be enabled/disabled.");
 							return;
 						}
-						if (!module.FilterType.HasFlag(FilterType.ServerWhitelist))
+						if (!module.FilterType.HasFlag(ModuleFilter.ServerWhitelist))
 						{
 							_client.ReplyError(e, "This module doesn't support being enabled for servers.");
 							return;
