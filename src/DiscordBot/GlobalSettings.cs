@@ -3,7 +3,7 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace DiscordBot.Modules
+namespace DiscordBot
 {
     public class GlobalSettings
 	{
@@ -31,8 +31,6 @@ namespace DiscordBot.Modules
 			public string Email;
 			[JsonProperty("password")]
 			public string Password;
-			[JsonProperty("token")]
-			public string Token;
 		}
 		[JsonProperty("discord")]
 		private DiscordSettings _discord = new DiscordSettings();

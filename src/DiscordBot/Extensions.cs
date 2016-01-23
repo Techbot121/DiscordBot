@@ -84,9 +84,26 @@ namespace DiscordBot
 				}
 			}
 			return users.ToArray();
-		}
+        }
+        public static async Task<Channel> FindChannel(this DiscordClient client, CommandEventArgs e, string name, ChannelType type = null)
+        {
+            var channels = e.Server.FindChannels(name, type);
 
-		public static async Task<User> GetUser(this DiscordClient client, CommandEventArgs e, ulong userId)
+            int count = channels.Count();
+            if (count == 0)
+            {
+                await client.ReplyError(e, "Channel was not found.");
+                return null;
+            }
+            else if (count > 1)
+            {
+                await client.ReplyError(e, "Multiple channels were found with that name.");
+                return null;
+            }
+            return channels.FirstOrDefault();
+        }
+
+        public static async Task<User> GetUser(this DiscordClient client, CommandEventArgs e, ulong userId)
 		{
 			var user = e.Server.GetUser(userId);
 
@@ -96,24 +113,6 @@ namespace DiscordBot
 				return null;
 			}
 			return user;
-		}
-		
-		public static async Task<Channel> FindChannel(this DiscordClient client, CommandEventArgs e, string name, ChannelType type = null)
-		{
-			var channels = e.Server.FindChannels(name, type);
-
-			int count = channels.Count();
-			if (count == 0)
-			{
-				await client.ReplyError(e, "Channel was not found.");
-				return null;
-			}
-			else if (count > 1)
-			{
-				await client.ReplyError(e, "Multiple channels were found with that name.");
-				return null;
-			}
-			return channels.FirstOrDefault();
-		}
+		}		
 	}
 }

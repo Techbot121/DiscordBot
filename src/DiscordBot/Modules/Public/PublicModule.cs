@@ -159,7 +159,7 @@ namespace DiscordBot.Modules.Public
 #elif DOTNET54 || NETPLATFORM14
             => ".Net Platform Standard 1.4";
 #else
-            => "Unknown"
+            => "Unknown";
 #endif
 
         private static string GetBitness()=> $"{IntPtr.Size * 8}-bit";

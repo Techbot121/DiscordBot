@@ -4,13 +4,13 @@ using Discord.Commands;
 using Discord.Commands.Permissions.Levels;
 using Discord.Commands.Permissions.Userlist;
 using Discord.Modules;
-using DiscordBot.Modules;
 using DiscordBot.Modules.Admin;
 using DiscordBot.Modules.Colors;
 using DiscordBot.Modules.Feeds;
 using DiscordBot.Modules.Github;
 using DiscordBot.Modules.Modules;
 using DiscordBot.Modules.Public;
+using DiscordBot.Modules.Status;
 using DiscordBot.Modules.Twitch;
 using DiscordBot.Services;
 using System;
@@ -25,40 +25,42 @@ namespace DiscordBot
 
         private void Start(string[] args)
         {
+            //Discord.ETF.ETFWriter.Test();
             GlobalSettings.Load();
 
             //Set up the base client itself with no voice and small message queues
-            _client = new DiscordClient(new DiscordConfig
+            _client = new DiscordClient(x =>
             {
-                AppName = "VoltBot",
-                AppUrl = "https://github.com/RogueException/DiscordBot",
-                AppVersion = DiscordConfig.LibVersion,
-                LogLevel = LogSeverity.Info,
-                MessageCacheSize = 0,
-                UsePermissionsCache = false
+                x.AppName = "VoltBot";
+                x.AppUrl = "https://github.com/RogueException/DiscordBot";
+                x.AppVersion = DiscordConfig.LibVersion;
+                x.LogLevel = LogSeverity.Info;
+                x.MessageCacheSize = 0;
+                x.UsePermissionsCache = false;
+                x.EnablePreUpdateEvents = true;
             })
 
             //** Core Services **//
             //These are services adding functionality from other Discord.Net.XXX packages
 
             //Enable commands on this bot and activate the built-in help command
-            .UsingCommands(new CommandServiceConfig
+            .UsingCommands(x =>
             {
-                CommandChar = '~',
-                HelpMode = HelpMode.Public
+                x.CommandChar = '~';
+                x.HelpMode = HelpMode.Public;
             })
 
             //Enable command modules
             .UsingModules()
 
             //Enable audio support
-            .UsingAudio(new AudioServiceConfig
+            .UsingAudio(x =>
             {
-                Mode = AudioMode.Outgoing,
-                EnableMultiserver = false,
-                EnableEncryption = true,
-                Bitrate = 512,
-                BufferLength = 10000
+                x.Mode = AudioMode.Outgoing;
+                x.EnableMultiserver = true;
+                x.EnableEncryption = true;
+                x.Bitrate = AudioServiceConfig.MaxBitrate;
+                x.BufferLength = 10000;
             })
 
             //** Command Permission Services **//
@@ -101,18 +103,19 @@ namespace DiscordBot
 
             //** Command Modules **//
             //Modules allow for events such as commands run or user joins to be filtered to certain servers/channels, as well as provide a grouping mechanism for commands
-
+            
             .AddModule<AdminModule>("Admin", ModuleFilter.ServerWhitelist)
             .AddModule<ColorsModule>("Colors", ModuleFilter.ServerWhitelist)
             .AddModule<FeedModule>("Feeds", ModuleFilter.ServerWhitelist)
             .AddModule<GithubModule>("Repos", ModuleFilter.ServerWhitelist)
             .AddModule<ModulesModule>("Modules", ModuleFilter.None)
             .AddModule<PublicModule>("Public", ModuleFilter.None)
-            .AddModule<TwitchModule>("Twitch", ModuleFilter.ServerWhitelist);
+            .AddModule<TwitchModule>("Twitch", ModuleFilter.ServerWhitelist)
+            .AddModule<StatusModule>("Status", ModuleFilter.ServerWhitelist);
             //.AddModule(new ExecuteModule(env, exporter), "Execute", ModuleFilter.ServerWhitelist);
 
             //** Events **//
-
+            
             _client.Log.Message += (s, e) => WriteLog(e);
 
             //Display errors that occur when a user tries to run a command
@@ -164,8 +167,8 @@ namespace DiscordBot
 
             //Convert this method to an async function and connect to the server
             //DiscordClient will automatically reconnect once we've established a connection, until then we loop on our end
-            //Note: Run is only needed for Console projects as Main can't be declared as async. UI/Web applications should *not* use this function.
-            _client.Run(async () =>
+            //Note: ExecuteAndWait is only needed for Console projects as Main can't be declared as async. UI/Web applications should *not* use this function.
+            _client.ExecuteAndWait(async () =>
             {
                 while (true)
                 {

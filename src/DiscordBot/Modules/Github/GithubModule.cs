@@ -165,10 +165,18 @@ namespace DiscordBot.Modules.Github
 
                                     foreach (var branch in repo.Value.Branches)
                                     {
-                                        content = await _http.Send(
-                                            HttpMethod.Get,
-                                            $"https://api.github.com/repos/{repo.Key}/commits?sha={branch}&since={since}",
-                                            authToken: GlobalSettings.Github.Token);
+                                        try
+                                        {
+                                            content = await _http.Send(
+                                                HttpMethod.Get,
+                                                $"https://api.github.com/repos/{repo.Key}/commits?sha={branch}&since={since}",
+                                                authToken: GlobalSettings.Github.Token);
+                                        }
+                                        catch (HttpException ex) when (ex.StatusCode == HttpStatusCode.Forbidden || ex.StatusCode == HttpStatusCode.NotFound)
+                                        {
+                                            _client.Log.Warning("Github", $"Unable to access {repo.Key}'s {branch} branch.");
+                                            continue;
+                                        }
                                         response = await content.ReadAsStringAsync();
                                         json = JsonConvert.DeserializeObject(response) as JToken;
 
@@ -201,16 +209,24 @@ namespace DiscordBot.Modules.Github
                                             {
                                                 await channel.SendMessage(builder.ToString());
                                             }
-                                            catch (HttpException ex) when (ex.StatusCode == HttpStatusCode.Forbidden) { }
+                                            catch (HttpException ex) when (ex.StatusCode == HttpStatusCode.Forbidden || ex.StatusCode == HttpStatusCode.NotFound) { }
                                         }
 
                                         await Task.Delay(1000, cancelToken);
                                     }
 
-                                    content = await _http.Send(
-                                        HttpMethod.Get,
-                                        $"https://api.github.com/repos/{repo.Key}/issues?state=all&sort=updated&since={since}",
-                                        authToken: GlobalSettings.Github.Token);
+                                    try
+                                    {
+                                        content = await _http.Send(
+                                            HttpMethod.Get,
+                                            $"https://api.github.com/repos/{repo.Key}/issues?state=all&sort=updated&since={since}",
+                                            authToken: GlobalSettings.Github.Token);
+                                    }
+                                    catch
+                                    {
+                                        _client.Log.Warning("Github", $"Unable to access {repo.Key}'s issues.");
+                                        continue;
+                                    }
                                     response = await content.ReadAsStringAsync();
                                     json = JsonConvert.DeserializeObject(response) as JToken;
 
@@ -239,17 +255,17 @@ namespace DiscordBot.Modules.Github
                                             skip = true;
                                             text = $"Updated {type} #{id}";
                                         }
+                                        _client.Log.Info("Github", $"{repo.Key} {text}");
                                         if (!string.IsNullOrEmpty(title))
                                             text += '\n' + title;
 
-                                        _client.Log.Info("Github", $"{repo.Key} {text}");
                                         if (!skip)
                                         {
                                             try
                                             {
                                                 await channel.SendMessage($"{Format.Bold(repo.Key)} {text}\n{Format.Escape(url)}");
                                             }
-                                            catch (HttpException ex) when (ex.StatusCode == HttpStatusCode.Forbidden) { }
+                                            catch (HttpException ex) when (ex.StatusCode == HttpStatusCode.Forbidden || ex.StatusCode == HttpStatusCode.NotFound) { }
                                         }
 
                                         var date = new DateTimeOffset(updatedAt.AddSeconds(1.0), TimeSpan.Zero);

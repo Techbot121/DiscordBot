@@ -201,6 +201,7 @@ project.lock.json
 /docs/_build
 *.pyc
 /src/DiscordBot/config
+/src/DiscordBot/ffmpeg.exe
 /src/DiscordBot/PrivateModules
 /src/DiscordBot/opus.dll
 /src/DiscordBot/libsodium.dll
