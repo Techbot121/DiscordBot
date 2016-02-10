@@ -65,7 +65,7 @@ namespace DiscordBot.Modules.Status
                     });
 			});
 
-			_client.Connected += (s, e) =>
+			_client.LoggedIn += (s, e) =>
 			{
 				if (!_isRunning)
 				{

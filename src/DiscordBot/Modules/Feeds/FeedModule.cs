@@ -88,7 +88,7 @@ namespace DiscordBot.Modules.Feeds
                     });
             });
 
-            _client.Connected += (s, e) =>
+            _client.LoggedIn += (s, e) =>
             {
                 if (!_isRunning)
                 {

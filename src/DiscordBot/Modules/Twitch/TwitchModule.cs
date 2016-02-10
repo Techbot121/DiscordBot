@@ -125,7 +125,7 @@ namespace DiscordBot.Modules.Twitch
                 });
             });
 
-            _client.Connected += (s, e) =>
+            _client.LoggedIn += (s, e) =>
             {
                 if (!_isRunning)
                 {

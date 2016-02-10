@@ -5,7 +5,6 @@ using Discord.Modules;
 using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace DiscordBot.Modules.Public
 {
@@ -26,7 +25,7 @@ namespace DiscordBot.Modules.Public
                 group.CreateCommand("join")
                     .Description("Requests the bot to join another server.")
                     .Parameter("invite url")
-                    .MinPermissions((int)PermissionLevel.User)
+                    .MinPermissions((int)PermissionLevel.BotOwner)
                     .Do(async e =>
                     {
                         var invite = await _client.GetInvite(e.Args[0]);
@@ -47,7 +46,6 @@ namespace DiscordBot.Modules.Public
                 group.CreateCommand("leave")
                     .Description("Instructs the bot to leave this server.")
                     .MinPermissions((int)PermissionLevel.ServerModerator)
-                    .MinPermissions((int)PermissionLevel.BotOwner)
                     .Do(async e =>
                     {
                         await _client.Reply(e, $"Leaving~");
@@ -56,32 +54,22 @@ namespace DiscordBot.Modules.Public
 
                 group.CreateCommand("say")
                     .Parameter("Text", ParameterType.Unparsed)
+                    .MinPermissions((int)PermissionLevel.BotOwner)
                     .Do(async e =>
                     {
                         await e.Channel.SendMessage(e.Message.Resolve(Format.Escape(e.Args[0])));
                     });
                 group.CreateCommand("sayraw")
                     .Parameter("Text", ParameterType.Unparsed)
+                    .MinPermissions((int)PermissionLevel.BotOwner)
                     .Do(async e =>
                     {
                         await e.Channel.SendMessage(e.Args[0]);
                     });
 
-                group.CreateCommand("whoami")
-                    .Do(async e =>
-                    {
-                        await Whois(e, e.User);
-                    });
-                group.CreateCommand("whois")
-                    .Parameter("User name")
-                    .Do(async e =>
-                    {
-                        User user = e.Server.FindUsers(e.Args[0]).FirstOrDefault();
-                        await Whois(e, user);
-                    });
-
                 group.CreateCommand("info")
                     .Alias("about")
+                    .MinPermissions((int)PermissionLevel.BotOwner)
                     .Do(async e =>
                     {
                         await e.Channel.SendMessage(
@@ -99,22 +87,6 @@ namespace DiscordBot.Modules.Public
                         );
                     });
             });
-        }
-
-        private async Task Whois(CommandEventArgs e, User user)
-        {
-            if (user != null)
-            {
-                var response = new
-                {
-                    Id = user.Id,
-                    Name = user.Name,
-                    Discriminator = user.Discriminator
-                };
-                await _client.Reply(e, "User Info", response);
-            }
-            else
-                await _client.Reply(e, "Unknown User");
         }
 
         private string GetRuntime()
