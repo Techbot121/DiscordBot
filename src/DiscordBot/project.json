@@ -3,7 +3,7 @@
 	"description": "DiscordBot",
 	"authors": [ "RogueException" ],
 	"tags": [ "discord", "discordapp" ],
-	"projectUrl": "https://github.com/RogueException/Discord.Bot",
+	"projectUrl": "https://github.com/RogueException/DiscordBot",
 	"licenseUrl": "http://opensource.org/licenses/MIT",
 	"repository": {
 		"type": "git",
@@ -39,10 +39,10 @@
 	},
 
   "dependencies": {
-    "Discord.Net": "0.9.0-alpha2",
-    "Discord.Net.Audio": "0.9.0-alpha2",
-    "Discord.Net.Commands": "0.9.0-alpha2",
-    "Discord.Net.Modules": "0.9.0-alpha2",
+    "Discord.Net": "0.9.0",
+    "Discord.Net.Audio": "0.9.0",
+    "Discord.Net.Commands": "0.9.0",
+    "Discord.Net.Modules": "0.9.0",
     "Newtonsoft.Json": "8.0.1"
   },
 
@@ -62,6 +62,7 @@
         "System.Console": "4.0.0-beta-23516",
         "System.Diagnostics.Process": "4.1.0-beta-23516",
         "System.Net.Http": "4.0.1-beta-23516",
+        "System.Runtime.Extensions": "4.0.11-beta-23516",
         "System.Xml.XDocument": "4.0.11-beta-23516"
       }
     }
