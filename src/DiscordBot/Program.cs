@@ -34,18 +34,17 @@ namespace DiscordBot
 #endif
 
             GlobalSettings.Load();
-            
+
             _client = new DiscordClient(x =>
             {
                 x.AppName = AppName;
                 x.AppUrl = AppUrl;
                 x.MessageCacheSize = 0;
-                x.UsePermissionsCache = false;
+                x.UsePermissionsCache = true;
                 x.EnablePreUpdateEvents = true;
-                x.LogLevel = LogSeverity.Info;
+                x.LogLevel = LogSeverity.Debug;
                 x.LogHandler = OnLogMessage;
             })
-
             .UsingCommands(x =>
             {
                 x.AllowMentionPrefix = true;
@@ -62,21 +61,21 @@ namespace DiscordBot
                 x.Bitrate = AudioServiceConfig.MaxBitrate;
                 x.BufferLength = 10000;
             })
-            .UsingPermissionLevels(PermissionResolver)
-            
-            .AddService<SettingsService>()
-            .AddService<HttpService>()
-            
-            .AddModule<AdminModule>("Admin", ModuleFilter.ServerWhitelist)
-            .AddModule<ColorsModule>("Colors", ModuleFilter.ServerWhitelist)
-            .AddModule<FeedModule>("Feeds", ModuleFilter.ServerWhitelist)
-            .AddModule<GithubModule>("Repos", ModuleFilter.ServerWhitelist)
-            .AddModule<ModulesModule>("Modules", ModuleFilter.None)
-            .AddModule<PublicModule>("Public", ModuleFilter.None)
-            .AddModule<TwitchModule>("Twitch", ModuleFilter.ServerWhitelist)
-            .AddModule<StatusModule>("Status", ModuleFilter.ServerWhitelist);
-            //.AddModule(new ExecuteModule(env, exporter), "Execute", ModuleFilter.ServerWhitelist);            
-            
+            .UsingPermissionLevels(PermissionResolver);
+
+            _client.AddService<SettingsService>();
+            _client.AddService<HttpService>();
+
+            _client.AddModule<AdminModule>("Admin", ModuleFilter.ServerWhitelist);
+            _client.AddModule<ColorsModule>("Colors", ModuleFilter.ServerWhitelist);
+            _client.AddModule<FeedModule>("Feeds", ModuleFilter.ServerWhitelist);
+            _client.AddModule<GithubModule>("Repos", ModuleFilter.ServerWhitelist);
+            _client.AddModule<ModulesModule>("Modules", ModuleFilter.None);
+            _client.AddModule<PublicModule>("Public", ModuleFilter.None);
+            _client.AddModule<TwitchModule>("Twitch", ModuleFilter.ServerWhitelist);
+            _client.AddModule<StatusModule>("Status", ModuleFilter.ServerWhitelist);
+            //_client.AddModule(new ExecuteModule(env, exporter), "Execute", ModuleFilter.ServerWhitelist);
+
 #if PRIVATE
             PrivateModules.Install(_client);
 #endif
@@ -92,6 +91,7 @@ namespace DiscordBot
                     {
                         await _client.Connect(GlobalSettings.Discord.Email, GlobalSettings.Discord.Password);
                         _client.SetGame("Discord.Net");
+                        //await _client.ClientAPI.Send(new Discord.API.Client.Rest.HealthRequest());
                         break;
                     }
                     catch (Exception ex)
@@ -102,30 +102,28 @@ namespace DiscordBot
                 }
             });
         }
-
-        //Display errors that occur when a user tries to run a command
-        //(In this case, we hide argcount, parsing and unknown command errors to reduce spam in servers with multiple bots)
+        
         private void OnCommandError(object sender, CommandErrorEventArgs e)
         {
-            string msg = e.Exception?.GetBaseException().Message;
+            string msg = e.Exception?.Message;
             if (msg == null) //No exception - show a generic message
             {
                 switch (e.ErrorType)
                 {
                     case CommandErrorType.Exception:
-                        //msg = "Unknown error.";
+                        msg = "Unknown error.";
                         break;
                     case CommandErrorType.BadPermissions:
                         msg = "You do not have permission to run this command.";
                         break;
                     case CommandErrorType.BadArgCount:
-                        //msg = "You provided the incorrect number of arguments for this command.";
+                        msg = "You provided the incorrect number of arguments for this command.";
                         break;
                     case CommandErrorType.InvalidInput:
-                        //msg = "Unable to parse your command, please check your input.";
+                        msg = "Unable to parse your command, please check your input.";
                         break;
                     case CommandErrorType.UnknownCommand:
-                        //msg = "Unknown command.";
+                        msg = "Unknown command.";
                         break;
                 }
             }
@@ -200,14 +198,8 @@ namespace DiscordBot
             }
 
             text = builder.ToString();
-            //if (e.Severity <= LogSeverity.Info)
-            //{
             Console.ForegroundColor = color;
             Console.WriteLine(text);
-            //}
-            /*#if DEBUG
-                        System.Diagnostics.Debug.WriteLine(text);
-            #endif*/
         }
 
         private int PermissionResolver(User user, Channel channel)

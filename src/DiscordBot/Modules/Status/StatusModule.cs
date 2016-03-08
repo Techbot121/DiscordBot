@@ -27,8 +27,8 @@ namespace DiscordBot.Modules.Status
 		{
 			_manager = manager;
 			_client = manager.Client;
-			_http = _client.Services.Get<HttpService>();
-			_settings = _client.Services.Get<SettingsService>()
+			_http = _client.GetService<HttpService>();
+			_settings = _client.GetService<SettingsService>()
 				.AddModule<StatusModule, Settings>(manager);
 
 			manager.CreateCommands("status", group =>
@@ -65,7 +65,7 @@ namespace DiscordBot.Modules.Status
                     });
 			});
 
-			_client.LoggedIn += (s, e) =>
+			_client.Ready += (s, e) =>
 			{
 				if (!_isRunning)
 				{
@@ -84,8 +84,8 @@ namespace DiscordBot.Modules.Status
                 StatusResult content;
                 while (!_client.CancelToken.IsCancellationRequested)
                 {
-                    //Wait 1 minute between full updates
-                    await Task.Delay(60000, cancelToken); 
+                    //Wait 5 minutes between full updates
+                    await Task.Delay(60000 * 5, cancelToken); 
 
                     //Get all current and recent incidents
                     try

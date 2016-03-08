@@ -27,8 +27,8 @@ namespace DiscordBot.Modules.Github
 		{
 			_manager = manager;
 			_client = manager.Client;
-			_http = _client.Services.Get<HttpService>();
-			_settings = _client.Services.Get<SettingsService>()
+			_http = _client.GetService<HttpService>();
+			_settings = _client.GetService<SettingsService>()
 				.AddModule<GithubModule, Settings>(manager);
 
 			manager.CreateCommands("repos", group =>
@@ -128,7 +128,7 @@ namespace DiscordBot.Modules.Github
 					});
 			});
 
-			_client.LoggedIn += (s, e) =>
+			_client.Ready += (s, e) =>
 			{
 				if (!_isRunning)
 				{

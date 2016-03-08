@@ -17,7 +17,7 @@ namespace DiscordBot.Modules.Modules
 		{
 			_manager = manager;
 			_client = manager.Client;
-			_service = manager.Client.Modules(true);
+			_service = manager.Client.GetService<ModuleService>();
 
             manager.CreateCommands("modules", group =>
 			{
