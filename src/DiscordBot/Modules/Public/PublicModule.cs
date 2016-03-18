@@ -75,6 +75,7 @@ namespace DiscordBot.Modules.Public
                         await e.Channel.SendMessage(
                             $"{Format.Bold("Info")}\n" +
                             $"- Author: Voltana (ID 53905483156684800)\n" +
+                            $"- Modified by: Techbot (ID 94829082360942592)\n" +
                             $"- Library: {DiscordConfig.LibName} ({DiscordConfig.LibVersion})\n" +
                             $"- Runtime: {GetRuntime()} {GetBitness()}\n" +
                             $"- Uptime: {GetUptime()}\n\n" +
@@ -85,6 +86,30 @@ namespace DiscordBot.Modules.Public
                             $"- Channels: {_client.Servers.Sum(x => x.AllChannels.Count())}\n" +
                             $"- Users: {_client.Servers.Sum(x => x.Users.Count())}"
                         );
+                    });
+
+                group.CreateCommand("avatar")
+                    .Parameter("user")
+                    .Parameter("discriminator", ParameterType.Optional)
+                    .Description("Displays the full resolution Avatar of the user specified.")
+                    .Alias("av")
+                    .Do(async e =>
+                    {
+                        var user = await _client.FindUser(e, e.Args[0], e.Args[1]);
+                        if (user == null)
+                        {
+                            await _client.Reply(e, $"Could not find that user.");
+                            return;
+                        }
+                        string avurl = user.AvatarUrl;
+                        await e.Channel.SendMessage(avurl);
+                    });
+
+                group.CreateCommand("pp")
+                    .Description("PEPEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
+                    .Do(async e =>
+                    {
+                        await e.Channel.SendMessage("http://www.myinstants.com/instant/pp/");
                     });
             });
         }
@@ -112,6 +137,7 @@ namespace DiscordBot.Modules.Public
             => ".Net Core 5.0";
 #elif DNX451
             => "DNX (.Net Framework 4.5.1)";
+
 #elif DNX452
             => "DNX (.Net Framework 4.5.2)";
 #elif DNX46
@@ -134,8 +160,10 @@ namespace DiscordBot.Modules.Public
             => "Unknown";
 #endif
 
-        private static string GetBitness()=> $"{IntPtr.Size * 8}-bit";
+        private static string GetBitness() => $"{IntPtr.Size * 8}-bit";
+
         private static string GetUptime() => (DateTime.Now - Process.GetCurrentProcess().StartTime).ToString(@"dd\.hh\:mm\:ss");
+
         private static string GetHeapSize() => Math.Round(GC.GetTotalMemory(true) / (1024.0 * 1024.0), 2).ToString();
     }
 }

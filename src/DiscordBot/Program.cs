@@ -11,6 +11,7 @@ using DiscordBot.Modules.Modules;
 using DiscordBot.Modules.Public;
 using DiscordBot.Modules.Status;
 using DiscordBot.Modules.Twitch;
+using DiscordBot.Modules.TwitchEmotes;
 using DiscordBot.Services;
 using System;
 using System.Text;
@@ -22,8 +23,8 @@ namespace DiscordBot
     {
         public static void Main(string[] args) => new Program().Start(args);
 
-        private const string AppName = "VoltBot";
-        private const string AppUrl = "https://github.com/RogueException/DiscordBot";
+        private const string AppName = "Hal1320";
+        private const string AppUrl = "https://github.com/Techbot121/DiscordBot";
 
         private DiscordClient _client;
 
@@ -53,27 +54,28 @@ namespace DiscordBot
                 x.ErrorHandler = OnCommandError;
             })
             .UsingModules()
-            .UsingAudio(x =>
-            {
-                x.Mode = AudioMode.Outgoing;
-                x.EnableMultiserver = true;
-                x.EnableEncryption = true;
-                x.Bitrate = AudioServiceConfig.MaxBitrate;
-                x.BufferLength = 10000;
-            })
+            //.UsingAudio(x =>
+            //{
+            //    x.Mode = AudioMode.Outgoing;
+            //    x.EnableMultiserver = true;
+            //    x.EnableEncryption = true;
+            //    x.Bitrate = AudioServiceConfig.MaxBitrate;
+            //    x.BufferLength = 10000;
+            //})
             .UsingPermissionLevels(PermissionResolver);
 
             _client.AddService<SettingsService>();
             _client.AddService<HttpService>();
 
-            _client.AddModule<AdminModule>("Admin", ModuleFilter.ServerWhitelist);
-            _client.AddModule<ColorsModule>("Colors", ModuleFilter.ServerWhitelist);
-            _client.AddModule<FeedModule>("Feeds", ModuleFilter.ServerWhitelist);
-            _client.AddModule<GithubModule>("Repos", ModuleFilter.ServerWhitelist);
+            _client.AddModule<AdminModule>("Admin", ModuleFilter.None);
+            _client.AddModule<ColorsModule>("Colors", ModuleFilter.None);
+            _client.AddModule<FeedModule>("Feeds", ModuleFilter.None);
+            _client.AddModule<GithubModule>("Repos", ModuleFilter.None);
             _client.AddModule<ModulesModule>("Modules", ModuleFilter.None);
             _client.AddModule<PublicModule>("Public", ModuleFilter.None);
-            _client.AddModule<TwitchModule>("Twitch", ModuleFilter.ServerWhitelist);
-            _client.AddModule<StatusModule>("Status", ModuleFilter.ServerWhitelist);
+            _client.AddModule<TwitchModule>("Twitch", ModuleFilter.None);
+            _client.AddModule<StatusModule>("Status", ModuleFilter.None);
+            _client.AddModule<TwitchEmotesModule>("TwitchEmotes", ModuleFilter.None);
             //_client.AddModule(new ExecuteModule(env, exporter), "Execute", ModuleFilter.ServerWhitelist);
 
 #if PRIVATE
@@ -90,7 +92,6 @@ namespace DiscordBot
                     try
                     {
                         await _client.Connect(GlobalSettings.Discord.Email, GlobalSettings.Discord.Password);
-                        _client.SetGame("Discord.Net");
                         //await _client.ClientAPI.Send(new Discord.API.Client.Rest.HealthRequest());
                         break;
                     }
