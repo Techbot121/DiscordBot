@@ -1,10 +1,6 @@
 ﻿using Discord;
-using Discord.Commands;
 using Discord.Commands.Permissions.Levels;
 using Discord.Modules;
-using System;
-using System.Diagnostics;
-using System.Linq;
 using System.IO;
 
 namespace DiscordBot.Modules.TwitchEmotes
@@ -15,7 +11,7 @@ namespace DiscordBot.Modules.TwitchEmotes
         private DiscordClient _client;
         private const string path = "./config/emotes/";
 
-        string[] Emotes = Directory.GetFiles(path,"*.png");
+        private string[] Emotes = Directory.GetFiles(path, "*.png");
 
         void IModule.Install(ModuleManager manager)
         {
@@ -26,16 +22,21 @@ namespace DiscordBot.Modules.TwitchEmotes
             {
                 group.MinPermissions((int)PermissionLevel.User);
 
-                foreach (var i in Emotes)
+                try
                 {
-                    group.CreateCommand(Path.GetFileNameWithoutExtension(i))
-                        .Do(async e =>
-                        {
-                            await e.Channel.SendFile(i);
-                        });
+                    foreach (var i in Emotes)
+                    {
+                        group.CreateCommand(Path.GetFileNameWithoutExtension(i))
+                             .Do(async e =>
+                             {
+                                 await e.Channel.SendFile(i);
+                             });
+                    }
                 }
-               
-
+                catch (IOException e)
+                {
+                    _client.Log.Error("TwitchEmotes", e);
+                }
             });
         }
     }

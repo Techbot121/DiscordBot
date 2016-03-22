@@ -59,5 +59,21 @@ namespace DiscordBot
 		[JsonProperty("github")]
 		private GithubSettings _github = new GithubSettings();
 		public static GithubSettings Github => _instance._github;
+
+        //Twitter
+        public class TwitterSettings
+        {
+            [JsonProperty("consumerkey")]
+            public string ConsumerKey;
+            [JsonProperty("consumersecret")]
+            public string ConsumerSecret;
+            [JsonProperty("accesskey")]
+            public string AccessKey;
+            [JsonProperty("accesssecret")]
+            public string AccessSecret;
+        }
+        [JsonProperty("twitter")]
+        private TwitterSettings _twitter = new TwitterSettings();
+        public static TwitterSettings Twitter => _instance._twitter;
 	}
 }
