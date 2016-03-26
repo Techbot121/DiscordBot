@@ -1,7 +1,7 @@
 ﻿using Discord;
-using Discord.Commands.Permissions.Levels;
 using Discord.Modules;
 using System.IO;
+using System.Linq;
 
 namespace DiscordBot.Modules.TwitchEmotes
 {
@@ -11,33 +11,55 @@ namespace DiscordBot.Modules.TwitchEmotes
         private DiscordClient _client;
         private const string path = "./config/emotes/";
 
-        private string[] Emotes = Directory.GetFiles(path, "*.png");
+        private string[] EmotePath = Directory.GetFiles(path, "*.png");
+
+        private string[] Emotes = Directory
+                    .GetFiles(path, "*.png")
+                    .Select(Path.GetFileNameWithoutExtension).ToArray();
 
         void IModule.Install(ModuleManager manager)
         {
             _manager = manager;
             _client = manager.Client;
 
-            manager.CreateCommands("", group =>
+            _client.MessageReceived += async (s, e) =>
             {
-                group.MinPermissions((int)PermissionLevel.User);
-
                 try
                 {
-                    foreach (var i in Emotes)
+                    var ma = e.Message.Text.Split(null);
+
+                    if (ma.Any(Emotes.Contains))
                     {
-                        group.CreateCommand(Path.GetFileNameWithoutExtension(i))
-                             .Do(async e =>
-                             {
-                                 await e.Channel.SendFile(i);
-                             });
+                        var emote = ma.Where(x => Emotes.Contains(x)).First();
+                        await e.Channel.SendFile(path + emote + ".png");
                     }
                 }
-                catch (IOException e)
+                catch
                 {
-                    _client.Log.Error("TwitchEmotes", e);
+                    // ignored
                 }
-            });
+            };
         }
     }
 }
+
+//        manager.CreateCommands("", group =>
+//{
+//    group.MinPermissions((int)PermissionLevel.User);
+
+//    try
+//    {
+//        foreach (var i in Emotes)
+//        {
+//            group.CreateCommand(Path.GetFileNameWithoutExtension(i))
+//                 .Do(async e =>
+//                 {
+//                     await e.Channel.SendFile(i);
+//                 });
+//        }
+//    }
+//    catch (IOException e)
+//    {
+//        _client.Log.Error("TwitchEmotes", e);
+//    }
+//});

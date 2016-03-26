@@ -4,38 +4,35 @@ using Discord.API.Status.Rest;
 using Discord.Commands;
 using Discord.Commands.Permissions.Levels;
 using Discord.Modules;
-using Discord.Net;
 using DiscordBot.Services;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Linq;
-using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace DiscordBot.Modules.Status
 {
-	internal class StatusModule : IModule
-	{
-		private ModuleManager _manager;
-		private DiscordClient _client;
-		private bool _isRunning;
-		private HttpService _http;
-		private SettingsManager<Settings> _settings;
+    internal class StatusModule : IModule
+    {
+        private ModuleManager _manager;
+        private DiscordClient _client;
+        private bool _isRunning;
+        private HttpService _http;
+        private SettingsManager<Settings> _settings;
 
-		void IModule.Install(ModuleManager manager)
-		{
-			_manager = manager;
-			_client = manager.Client;
-			_http = _client.GetService<HttpService>();
-			_settings = _client.GetService<SettingsService>()
-				.AddModule<StatusModule, Settings>(manager);
+        void IModule.Install(ModuleManager manager)
+        {
+            _manager = manager;
+            _client = manager.Client;
+            _http = _client.GetService<HttpService>();
+            _settings = _client.GetService<SettingsService>()
+                .AddModule<StatusModule, Settings>(manager);
 
-			manager.CreateCommands("status", group =>
-			{
-				group.MinPermissions((int)PermissionLevel.BotOwner);
+            manager.CreateCommands("status", group =>
+            {
+                group.MinPermissions((int)PermissionLevel.BotOwner);
 
-				group.CreateCommand("enable")
+                group.CreateCommand("enable")
                     .Parameter("channel", ParameterType.Optional)
                     .Do(async e =>
                     {
@@ -51,8 +48,8 @@ namespace DiscordBot.Modules.Status
                         settings.Channel = channel.Id;
                         await _settings.Save(e.Server, settings);
 
-						await _client.Reply(e, $"Enabled status reports in {channel.Name}");
-					});
+                        await _client.Reply(e, $"Enabled status reports in {channel.Name}");
+                    });
                 group.CreateCommand("disable")
                     .Do(async e =>
                     {
@@ -63,17 +60,17 @@ namespace DiscordBot.Modules.Status
 
                         await _client.Reply(e, "Disabled status reports on this server.");
                     });
-			});
+            });
 
-			_client.Ready += (s, e) =>
-			{
-				if (!_isRunning)
-				{
-					Task.Run(Run);
-					_isRunning = true;
-				}
-			};
-		}
+            _client.Ready += (s, e) =>
+            {
+                if (!_isRunning)
+                {
+                    Task.Run(Run);
+                    _isRunning = true;
+                }
+            };
+        }
 
         public async Task Run()
         {
@@ -85,7 +82,7 @@ namespace DiscordBot.Modules.Status
                 while (!_client.CancelToken.IsCancellationRequested)
                 {
                     //Wait 5 minutes between full updates
-                    await Task.Delay(60000 * 5, cancelToken); 
+                    await Task.Delay(60000 * 5, cancelToken);
 
                     //Get all current and recent incidents
                     try
@@ -149,5 +146,5 @@ namespace DiscordBot.Modules.Status
             }
             catch (TaskCanceledException) { }
         }
-	}
+    }
 }

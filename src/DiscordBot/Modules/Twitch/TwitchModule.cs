@@ -4,15 +4,14 @@ using Discord.Commands.Permissions.Levels;
 using Discord.Modules;
 using Discord.Net;
 using DiscordBot.Services;
-using System.Net.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
+using System.Net.Http;
 using System.Text;
-using Discord.API.Client.Rest;
+using System.Threading.Tasks;
 
 namespace DiscordBot.Modules.Twitch
 {
@@ -134,6 +133,7 @@ namespace DiscordBot.Modules.Twitch
                 }
             };
         }
+
         public async Task Run()
         {
             var cancelToken = _client.CancelToken;

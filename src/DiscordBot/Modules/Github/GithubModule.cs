@@ -15,128 +15,128 @@ using System.Threading.Tasks;
 
 namespace DiscordBot.Modules.Github
 {
-	internal class GithubModule : IModule
-	{
-		private ModuleManager _manager;
-		private DiscordClient _client;
-		private bool _isRunning;
-		private HttpService _http;
-		private SettingsManager<Settings> _settings;
+    internal class GithubModule : IModule
+    {
+        private ModuleManager _manager;
+        private DiscordClient _client;
+        private bool _isRunning;
+        private HttpService _http;
+        private SettingsManager<Settings> _settings;
 
-		void IModule.Install(ModuleManager manager)
-		{
-			_manager = manager;
-			_client = manager.Client;
-			_http = _client.GetService<HttpService>();
-			_settings = _client.GetService<SettingsService>()
-				.AddModule<GithubModule, Settings>(manager);
+        void IModule.Install(ModuleManager manager)
+        {
+            _manager = manager;
+            _client = manager.Client;
+            _http = _client.GetService<HttpService>();
+            _settings = _client.GetService<SettingsService>()
+                .AddModule<GithubModule, Settings>(manager);
 
-			manager.CreateCommands("repos", group =>
-			{
-				group.MinPermissions((int)PermissionLevel.BotOwner);
+            manager.CreateCommands("repos", group =>
+            {
+                group.MinPermissions((int)PermissionLevel.BotOwner);
 
-				group.CreateCommand("list")
-					.Do(async e =>
-					{
-						StringBuilder builder = new StringBuilder();
-						var settings = _settings.Load(e.Server);
-						foreach (var repo in settings.Repos.OrderBy(x => x.Key))
-							builder.AppendLine($"{repo.Key} [{string.Join(",", repo.Value.Branches)}] => {_client.GetChannel(repo.Value.ChannelId)?.Name ?? "Unknown"}");
-						await _client.Reply(e, "Linked Repos", builder.ToString());
-					});
+                group.CreateCommand("list")
+                    .Do(async e =>
+                    {
+                        StringBuilder builder = new StringBuilder();
+                        var settings = _settings.Load(e.Server);
+                        foreach (var repo in settings.Repos.OrderBy(x => x.Key))
+                            builder.AppendLine($"{repo.Key} [{string.Join(",", repo.Value.Branches)}] => {_client.GetChannel(repo.Value.ChannelId)?.Name ?? "Unknown"}");
+                        await _client.Reply(e, "Linked Repos", builder.ToString());
+                    });
 
-				group.CreateCommand("add")
-					.Parameter("githubrepo")
-					.Parameter("channel", ParameterType.Optional)
-					.Do(async e =>
-					{
-						var settings = _settings.Load(e.Server);
-						Channel channel;
-						if (e.Args[1] != "")
-							channel = await _client.FindChannel(e, e.Args[1], ChannelType.Text);
-						else
-							channel = e.Channel;
-						if (channel == null) return;
+                group.CreateCommand("add")
+                    .Parameter("githubrepo")
+                    .Parameter("channel", ParameterType.Optional)
+                    .Do(async e =>
+                    {
+                        var settings = _settings.Load(e.Server);
+                        Channel channel;
+                        if (e.Args[1] != "")
+                            channel = await _client.FindChannel(e, e.Args[1], ChannelType.Text);
+                        else
+                            channel = e.Channel;
+                        if (channel == null) return;
 
-						string url = FilterUrl(e.Args[0]);
-						if (settings.AddRepo(url, channel.Id))
-						{
-							await _settings.Save(e.Server.Id, settings);
-							await _client.Reply(e, $"Linked repo {url} to {channel.Name}.");
-						}
-						else
-							await _client.Reply(e, $"Error: Repo {url} is already being watched.");
-					});
+                        string url = FilterUrl(e.Args[0]);
+                        if (settings.AddRepo(url, channel.Id))
+                        {
+                            await _settings.Save(e.Server.Id, settings);
+                            await _client.Reply(e, $"Linked repo {url} to {channel.Name}.");
+                        }
+                        else
+                            await _client.Reply(e, $"Error: Repo {url} is already being watched.");
+                    });
 
-				group.CreateCommand("remove")
-					.Parameter("githubrepo")
-					.Do(async e =>
-					{
-						var settings = _settings.Load(e.Server);
-						string url = FilterUrl(e.Args[0]);
-						if (settings.RemoveRepo(url))
-						{
-							await _settings.Save(e.Server.Id, settings);
-							await _client.Reply(e, $"Unlinked repo {url}.");
-						}
-						else
-							await _client.Reply(e, $"Error: Repo {url} is not currently being watched.");
-					});
+                group.CreateCommand("remove")
+                    .Parameter("githubrepo")
+                    .Do(async e =>
+                    {
+                        var settings = _settings.Load(e.Server);
+                        string url = FilterUrl(e.Args[0]);
+                        if (settings.RemoveRepo(url))
+                        {
+                            await _settings.Save(e.Server.Id, settings);
+                            await _client.Reply(e, $"Unlinked repo {url}.");
+                        }
+                        else
+                            await _client.Reply(e, $"Error: Repo {url} is not currently being watched.");
+                    });
 
-				group.CreateCommand("addbranch")
-					.Parameter("githubrepo")
-					.Parameter("branch")
-					.Do(async e =>
-					{
-						var settings = _settings.Load(e.Server);
-						string url = FilterUrl(e.Args[0]);
-						var repo = settings.Repos[url];
-						if (repo != null)
-						{
-							if (repo.AddBranch(e.Args[1]))
-							{
-								await _settings.Save(e.Server.Id, settings);
-								await _client.Reply(e, $"Added branch {url}/{e.Args[1]}.");
-							}
-							else
-								await _client.Reply(e, $"Error: Branch {url}/{e.Args[1]} is already being watched.");
-						}
-						else
-							await _client.Reply(e, $"Error: Repo {url} is not currently being watched.");
-					});
+                group.CreateCommand("addbranch")
+                    .Parameter("githubrepo")
+                    .Parameter("branch")
+                    .Do(async e =>
+                    {
+                        var settings = _settings.Load(e.Server);
+                        string url = FilterUrl(e.Args[0]);
+                        var repo = settings.Repos[url];
+                        if (repo != null)
+                        {
+                            if (repo.AddBranch(e.Args[1]))
+                            {
+                                await _settings.Save(e.Server.Id, settings);
+                                await _client.Reply(e, $"Added branch {url}/{e.Args[1]}.");
+                            }
+                            else
+                                await _client.Reply(e, $"Error: Branch {url}/{e.Args[1]} is already being watched.");
+                        }
+                        else
+                            await _client.Reply(e, $"Error: Repo {url} is not currently being watched.");
+                    });
 
-				group.CreateCommand("removebranch")
-					.Parameter("githubrepo")
-					.Parameter("branch")
-					.Do(async e =>
-					{
-						var settings = _settings.Load(e.Server);
-						string url = FilterUrl(e.Args[0]);
-						var repo = settings.Repos[url];
-						if (repo != null)
-						{
-							if (repo.RemoveBranch(e.Args[1]))
-							{
-								await _settings.Save(e.Server.Id, settings);
-								await _client.Reply(e, $"Removed branch {url}/{e.Args[1]}.");
-							}
-							else
-								await _client.Reply(e, $"Error: Branch {url}/{e.Args[1]} is not being watched.");
-						}
-						else
-							await _client.Reply(e, $"Error: Repo {url} is not currently being watched.");
-					});
-			});
+                group.CreateCommand("removebranch")
+                    .Parameter("githubrepo")
+                    .Parameter("branch")
+                    .Do(async e =>
+                    {
+                        var settings = _settings.Load(e.Server);
+                        string url = FilterUrl(e.Args[0]);
+                        var repo = settings.Repos[url];
+                        if (repo != null)
+                        {
+                            if (repo.RemoveBranch(e.Args[1]))
+                            {
+                                await _settings.Save(e.Server.Id, settings);
+                                await _client.Reply(e, $"Removed branch {url}/{e.Args[1]}.");
+                            }
+                            else
+                                await _client.Reply(e, $"Error: Branch {url}/{e.Args[1]} is not being watched.");
+                        }
+                        else
+                            await _client.Reply(e, $"Error: Repo {url} is not currently being watched.");
+                    });
+            });
 
-			_client.Ready += (s, e) =>
-			{
-				if (!_isRunning)
-				{
-					Task.Run(Run);
-					_isRunning = true;
-				}
-			};
-		}
+            _client.Ready += (s, e) =>
+            {
+                if (!_isRunning)
+                {
+                    Task.Run(Run);
+                    _isRunning = true;
+                }
+            };
+        }
 
         public async Task Run()
         {
@@ -300,15 +300,15 @@ namespace DiscordBot.Modules.Github
             catch (TaskCanceledException) { }
         }
 
-		private static string FilterUrl(string url)
-		{
-			if (url.StartsWith("http://github.com/"))
-				url = url.Substring("http://github.com/".Length);
-			else if (url.StartsWith("https://github.com/"))
-				url = url.Substring("https://github.com/".Length);
-			if (url.EndsWith("/"))
-				url = url.Substring(0, url.Length - 1);
-			return url.Trim();
-		}
-	}
+        private static string FilterUrl(string url)
+        {
+            if (url.StartsWith("http://github.com/"))
+                url = url.Substring("http://github.com/".Length);
+            else if (url.StartsWith("https://github.com/"))
+                url = url.Substring("https://github.com/".Length);
+            if (url.EndsWith("/"))
+                url = url.Substring(0, url.Length - 1);
+            return url.Trim();
+        }
+    }
 }

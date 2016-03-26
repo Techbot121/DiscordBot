@@ -1,5 +1,4 @@
 ﻿using Discord;
-using Discord.Audio;
 using Discord.Commands;
 using Discord.Commands.Permissions.Levels;
 using Discord.Modules;
@@ -105,7 +104,7 @@ namespace DiscordBot
                 }
             });
         }
-        
+
         private void OnCommandError(object sender, CommandErrorEventArgs e)
         {
             string msg = e.Exception?.Message;
@@ -116,15 +115,19 @@ namespace DiscordBot
                     case CommandErrorType.Exception:
                         msg = "Unknown error.";
                         break;
+
                     case CommandErrorType.BadPermissions:
                         msg = "You do not have permission to run this command.";
                         break;
+
                     case CommandErrorType.BadArgCount:
                         msg = "You provided the incorrect number of arguments for this command.";
                         break;
+
                     case CommandErrorType.InvalidInput:
                         msg = "Unable to parse your command, please check your input.";
                         break;
+
                     case CommandErrorType.UnknownCommand:
                         msg = "Unknown command.";
                         break;
@@ -136,6 +139,7 @@ namespace DiscordBot
                 _client.Log.Error("Command", msg);
             }
         }
+
         private void OnCommandExecuted(object sender, CommandEventArgs e)
         {
             _client.Log.Info("Command", $"{e.Command.Text} ({e.User.Name})");

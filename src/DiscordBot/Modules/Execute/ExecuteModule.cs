@@ -24,7 +24,6 @@ namespace DiscordBot.Modules.Execute
     /// <summary> Allows the execution of scripts from within Discord. Be very careful with the permissions of this module - allowing remote execution for anyone but the bot owner is generally a bad idea.  </summary>
     internal class ExecuteModule : IModule
 	{
-
         private readonly IApplicationEnvironment _dnxEnvironment;
         private readonly ILibraryExporter _libExporter;
         private ModuleManager _manager;
@@ -113,7 +112,7 @@ namespace DiscordBot.Modules.Execute
 					return AssemblyMetadata.Create(moduleMetadata).GetReference(filePath: fileMetadataReference.Path);
 				}
 			}
-            
+
 			var projectReference = metadataReference as IMetadataProjectReference;
 			if (projectReference != null)
 			{

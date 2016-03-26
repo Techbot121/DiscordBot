@@ -30,7 +30,7 @@ namespace DiscordBot.Services
 
             base.LoadConfigs();
         }
-        
+
         public async Task SaveGlobal(GlobalSettingsT settings)
         {
             while (true)
@@ -51,25 +51,25 @@ namespace DiscordBot.Services
     }
 
     public class SettingsManager<SettingsT>
-		where SettingsT : class, new()
-	{
-		public string Directory => _dir;
-		protected readonly string _dir;
+        where SettingsT : class, new()
+    {
+        public string Directory => _dir;
+        protected readonly string _dir;
 
-		public IEnumerable<KeyValuePair<ulong, SettingsT>> AllServers => _servers;
-		private ConcurrentDictionary<ulong, SettingsT> _servers;
+        public IEnumerable<KeyValuePair<ulong, SettingsT>> AllServers => _servers;
+        private ConcurrentDictionary<ulong, SettingsT> _servers;
 
-		public SettingsManager(string name)
-		{
-			_dir = $"./config/{name}";
-			System.IO.Directory.CreateDirectory(_dir);
+        public SettingsManager(string name)
+        {
+            _dir = $"./config/{name}";
+            System.IO.Directory.CreateDirectory(_dir);
 
-			LoadConfigs();
-		}
-        
-		public bool RemoveServer(ulong id)
-		{
-			SettingsT settings;
+            LoadConfigs();
+        }
+
+        public bool RemoveServer(ulong id)
+        {
+            SettingsT settings;
             if (_servers.TryRemove(id, out settings))
             {
                 var path = $"{_dir}/{id}.json";
@@ -78,9 +78,9 @@ namespace DiscordBot.Services
                 return true;
             }
             return false;
-		}
+        }
 
-		public virtual void LoadConfigs()
+        public virtual void LoadConfigs()
         {
             var servers = System.IO.Directory.GetFiles(_dir)
                 .Select(x =>
@@ -102,50 +102,55 @@ namespace DiscordBot.Services
                 });
 
             _servers = new ConcurrentDictionary<ulong, SettingsT>(servers);
-		}
+        }
 
-		public SettingsT Load(Server server)
-			=> Load(server.Id);
-		public SettingsT Load(ulong serverId)
-		{
-			SettingsT result;
-			if (_servers.TryGetValue(serverId, out result))
-				return result;
-			else
-				return new SettingsT();
-		}
+        public SettingsT Load(Server server)
+            => Load(server.Id);
 
-		public Task Save(Server server, SettingsT settings)
-			=> Save(server.Id, settings);
-		public Task Save(KeyValuePair<ulong, SettingsT> pair)
-			=> Save(pair.Key, pair.Value);
+        public SettingsT Load(ulong serverId)
+        {
+            SettingsT result;
+            if (_servers.TryGetValue(serverId, out result))
+                return result;
+            else
+                return new SettingsT();
+        }
+
+        public Task Save(Server server, SettingsT settings)
+            => Save(server.Id, settings);
+
+        public Task Save(KeyValuePair<ulong, SettingsT> pair)
+            => Save(pair.Key, pair.Value);
+
         public async Task Save(ulong serverId, SettingsT settings)
-		{
-			_servers[serverId] = settings;
+        {
+            _servers[serverId] = settings;
 
-			while (true)
-			{
-				try
-				{
-					using (var fs = new FileStream($"{_dir}/{serverId}.json", FileMode.Create, FileAccess.Write, FileShare.None))
-					using (var writer = new StreamWriter(fs))
-						await writer.WriteAsync(JsonConvert.SerializeObject(settings));
-					break;
-				}
-				catch (IOException) //In use
-				{
-					await Task.Delay(1000);
-				}
-			}
-		}
-	}
+            while (true)
+            {
+                try
+                {
+                    using (var fs = new FileStream($"{_dir}/{serverId}.json", FileMode.Create, FileAccess.Write, FileShare.None))
+                    using (var writer = new StreamWriter(fs))
+                        await writer.WriteAsync(JsonConvert.SerializeObject(settings));
+                    break;
+                }
+                catch (IOException) //In use
+                {
+                    await Task.Delay(1000);
+                }
+            }
+        }
+    }
 
-	public class SettingsService : IService
-	{
-		public void Install(DiscordClient client) { }
+    public class SettingsService : IService
+    {
+        public void Install(DiscordClient client)
+        {
+        }
 
-		public SettingsManager<SettingsT> AddModule<ModuleT, SettingsT>(ModuleManager manager)
-			where SettingsT : class, new()
+        public SettingsManager<SettingsT> AddModule<ModuleT, SettingsT>(ModuleManager manager)
+            where SettingsT : class, new()
             => new SettingsManager<SettingsT>(manager.Id);
 
         public SettingsManager<GlobalSettingsT, SettingsT> AddModule<ModuleT, GlobalSettingsT, SettingsT>(ModuleManager manager)
