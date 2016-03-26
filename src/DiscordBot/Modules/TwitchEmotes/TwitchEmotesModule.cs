@@ -1,7 +1,9 @@
 ﻿using Discord;
 using Discord.Modules;
+using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace DiscordBot.Modules.TwitchEmotes
 {
@@ -30,8 +32,31 @@ namespace DiscordBot.Modules.TwitchEmotes
 
                     if (ma.Any(Emotes.Contains))
                     {
-                        var emote = ma.Where(x => Emotes.Contains(x)).First();
-                        await e.Channel.SendFile(path + emote + ".png");
+                        if (ma.Where(Emotes.Contains).Count() > 1)
+                        {
+                            var emotes = ma.Where(Emotes.Contains);
+                            var images = new List<Image>();
+
+                            foreach (string x in emotes)
+                            {
+                                using (Stream stream = File.OpenRead(path + x + ".png"))
+                                {
+                                    Image image = Image.FromStream(stream, false, false);
+                                    images.Add(image);
+
+                                }
+                            }
+                            // lol
+                            MergeImages(images).Save("asd.png");
+                            await e.Channel.SendFile("asd.png");
+                            File.Delete("asd.png");
+                            // lol
+                        }
+                        else
+                        {
+                            var emote = ma.Where(x => Emotes.Contains(x)).First();
+                            await e.Channel.SendFile(path + emote + ".png");
+                        }
                     }
                 }
                 catch
@@ -40,26 +65,32 @@ namespace DiscordBot.Modules.TwitchEmotes
                 }
             };
         }
+        private Bitmap MergeImages(IEnumerable<Image> images)
+        {
+            var enumerable = images;
+
+            var width = 0;
+            var height = 0;
+
+            foreach (var image in enumerable)
+            {
+                width += image.Width + 4;
+                height = image.Height > height
+                    ? image.Height
+                    : height;
+            }
+
+            var bitmap = new Bitmap(width, height);
+            using (var g = Graphics.FromImage(bitmap))
+            {
+                var localWidth = 0;
+                foreach (var image in enumerable)
+                {
+                    g.DrawImage(image, localWidth, 0);
+                    localWidth += image.Width + 2;
+                }
+            }
+            return bitmap;
+        }
     }
 }
-
-//        manager.CreateCommands("", group =>
-//{
-//    group.MinPermissions((int)PermissionLevel.User);
-
-//    try
-//    {
-//        foreach (var i in Emotes)
-//        {
-//            group.CreateCommand(Path.GetFileNameWithoutExtension(i))
-//                 .Do(async e =>
-//                 {
-//                     await e.Channel.SendFile(i);
-//                 });
-//        }
-//    }
-//    catch (IOException e)
-//    {
-//        _client.Log.Error("TwitchEmotes", e);
-//    }
-//});
