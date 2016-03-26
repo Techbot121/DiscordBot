@@ -1,9 +1,9 @@
 ﻿using Discord;
 using Discord.Modules;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Collections.Generic;
 
 namespace DiscordBot.Modules.TwitchEmotes
 {
@@ -43,7 +43,6 @@ namespace DiscordBot.Modules.TwitchEmotes
                                 {
                                     Image image = Image.FromStream(stream, false, false);
                                     images.Add(image);
-
                                 }
                             }
                             // lol
@@ -65,6 +64,7 @@ namespace DiscordBot.Modules.TwitchEmotes
                 }
             };
         }
+
         private Bitmap MergeImages(IEnumerable<Image> images)
         {
             var enumerable = images;
