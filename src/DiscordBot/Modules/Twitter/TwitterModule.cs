@@ -17,14 +17,14 @@ namespace DiscordBot.Modules.Twitter
             _client = manager.Client;
             _http = _client.GetService<HttpService>();
 
-            TwitterService ts = new TwitterService(GlobalSettings.Twitter.ConsumerKey, GlobalSettings.Twitter.ConsumerSecret);
+            var ts = new TwitterService(GlobalSettings.Twitter.ConsumerKey, GlobalSettings.Twitter.ConsumerSecret);
             ts.AuthenticateWith(GlobalSettings.Twitter.AccessKey, GlobalSettings.Twitter.AccessSecret);
 
             _client.MessageReceived += async (s, e) =>
             {
                 try
                 {
-                    Match mt = Regex.Match(e.Message.Text, @"https?://(www.)?twitter.com/([a-zA-Z0-9_]+)/status/([0-9]+)", RegexOptions.IgnoreCase);
+                    var mt = Regex.Match(e.Message.Text, @"https?://(www.)?twitter.com/([a-zA-Z0-9_]+)/status/([0-9]+)", RegexOptions.IgnoreCase);
                     if (mt.Success)
                     {
                         var tweetId = long.Parse(mt.Groups[3].ToString());
@@ -49,7 +49,10 @@ namespace DiscordBot.Modules.Twitter
                     }
                     else { return; }
                 }
-                catch { }
+                catch
+                {
+                    // ignored
+                }
             };
         }
     }

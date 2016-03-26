@@ -114,7 +114,7 @@ namespace DiscordBot.Modules.Public
             });
         }
 
-        private string GetRuntime()
+        private static string GetRuntime()
 #if NET11
             => ".Net Framework 1.1";
 #elif NET20
