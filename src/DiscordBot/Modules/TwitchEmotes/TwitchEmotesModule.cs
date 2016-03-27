@@ -32,7 +32,7 @@ namespace DiscordBot.Modules.TwitchEmotes
 
                     if (ma.Any(Emotes.Contains))
                     {
-                        if (ma.Where(Emotes.Contains).Count() > 1)
+                        if (ma.Where(Emotes.Contains).Count() > 1 && ma.Where(Emotes.Contains).Count() < 10)
                         {
                             var emotes = ma.Where(Emotes.Contains);
                             var images = new List<Image>();
