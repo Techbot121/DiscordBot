@@ -32,6 +32,9 @@ namespace DiscordBot
 
             [JsonProperty("password")]
             public string Password;
+
+            [JsonProperty("token")]
+            public string Token;
         }
 
         [JsonProperty("discord")]
