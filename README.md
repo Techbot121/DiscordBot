@@ -1,2 +1,2 @@
 # DiscordBot
-Bot based on ReugeExceptions DiscordBot.
+Bot based on RougeExceptions DiscordBot.
