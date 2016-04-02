@@ -248,13 +248,13 @@ namespace DiscordBot.Modules.Github
                                         if (author.Equals(repoAuthor, StringComparison.OrdinalIgnoreCase))
                                             skip = true;
                                         if (updatedAt == closedAt)
-                                            text = $"Closed {type} #{id}";
+                                            text = $"Closed {type} #{id} by: {author}";
                                         else if (createdAt == updatedAt)
-                                            text = $"New {type} #{id}";
+                                            text = $"New {type} #{id} by: {author}";
                                         else
                                         {
-                                            skip = true;
-                                            text = $"Updated {type} #{id}";
+                                            skip = false;
+                                            text = $"Updated {type} #{id} by: {author}";
                                         }
                                         _client.Log.Info("Github", $"{repo.Key} {text}");
                                         if (!string.IsNullOrEmpty(title))
