@@ -193,13 +193,13 @@ namespace DiscordBot.Modules.Github
                                                 var msg = commit["commit"].Value<string>("message");
                                                 var date = new DateTimeOffset(commit["commit"]["committer"].Value<DateTime>("date").AddSeconds(1.0), TimeSpan.Zero);
                                                 var author = commit["commit"]["committer"].Value<string>("name");
-                                                //var url = commit.Value<string>("html_url");
+                                                var url = commit.Value<string>("html_url");
 
                                                 _client.Log.Info("Github", $"{repo.Key} {branch} #{sha}");
 
                                                 string prefix = $"\n{Format.Code(sha)} ";
                                                 builder.Append($"{prefix}{Format.Escape(msg.Split('\n')[0])} [{author}]");
-                                                //builder.Append($"{prefix}{url}");
+                                                builder.Append($"{prefix}{url}");
                                                 if (date > newDate)
                                                 {
                                                     newDate = date;
