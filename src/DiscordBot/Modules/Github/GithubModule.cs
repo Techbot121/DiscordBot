@@ -199,7 +199,7 @@ namespace DiscordBot.Modules.Github
 
                                                 string prefix = $"\n{Format.Code(sha)} ";
                                                 builder.Append($"{prefix}{Format.Escape(msg.Split('\n')[0])} [{author}]");
-                                                builder.Append($"{prefix}{url}");
+                                                builder.Append($"{url}");
                                                 if (date > newDate)
                                                 {
                                                     newDate = date;
