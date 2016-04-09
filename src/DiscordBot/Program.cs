@@ -43,7 +43,7 @@ namespace DiscordBot
                 x.MessageCacheSize = 0;
                 x.UsePermissionsCache = true;
                 x.EnablePreUpdateEvents = true;
-                x.LogLevel = LogSeverity.Debug;
+                x.LogLevel = LogSeverity.Verbose;
                 x.LogHandler = OnLogMessage;
             })
             .UsingCommands(x =>
@@ -93,9 +93,9 @@ namespace DiscordBot
                     try
                     {
                         if (GlobalSettings.Discord.Token != null)
-                        await _client.Connect(GlobalSettings.Discord.Token);
+                            await _client.Connect(GlobalSettings.Discord.Token);
                         else
-                        await _client.Connect(GlobalSettings.Discord.Email, GlobalSettings.Discord.Password);
+                            await _client.Connect(GlobalSettings.Discord.Email, GlobalSettings.Discord.Password);
                         //await _client.ClientAPI.Send(new Discord.API.Client.Rest.HealthRequest());
                         break;
                     }

@@ -16,10 +16,7 @@ namespace DiscordBot.Modules.Twitch
 
             public IEnumerable<KeyValuePair<string, Stream>> Streams { get { return _streams; } set { _streams = new ConcurrentDictionary<string, Stream>(value); } }
 
-            public bool AddStream(string username)
-            {
-                return _streams.TryAdd(username, new Stream());
-            }
+            public bool AddStream(string username) => _streams.TryAdd(username, new Stream());
 
             public bool RemoveStream(string username)
             {
