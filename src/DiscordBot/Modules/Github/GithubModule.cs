@@ -291,7 +291,7 @@ namespace DiscordBot.Modules.Github
                                 continue;
                             }
 
-                            await Task.Delay(1000, cancelToken); //Wait 1 second between individual requests
+                            await Task.Delay(5000, cancelToken); //Wait 1 second between individual requests
                         }
                     }
                     await Task.Delay(60000, cancelToken); //Wait 1 minute between full updates
