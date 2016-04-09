@@ -49,7 +49,7 @@ namespace DiscordBot
             .UsingCommands(x =>
             {
                 x.AllowMentionPrefix = true;
-                x.HelpMode = HelpMode.Private;
+                x.HelpMode = HelpMode.Public;
                 x.ExecuteHandler = OnCommandExecuted;
                 x.ErrorHandler = OnCommandError;
             })
