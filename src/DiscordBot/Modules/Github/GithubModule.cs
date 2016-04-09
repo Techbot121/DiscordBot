@@ -253,7 +253,7 @@ namespace DiscordBot.Modules.Github
                                             text = $"New {type} #{id} by: {author}";
                                         else
                                         {
-                                            skip = false;
+                                            skip = true;
                                             text = $"Updated {type} #{id} by: {author}";
                                         }
                                         _client.Log.Info("Github", $"{repo.Key} {text}");
