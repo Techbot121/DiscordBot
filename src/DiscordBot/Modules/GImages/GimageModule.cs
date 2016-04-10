@@ -29,78 +29,26 @@ namespace DiscordBot.Modules.GImages
                 .Parameter("method", ParameterType.Optional)
                 .Parameter("amount", ParameterType.Optional)
                 .Parameter("query", ParameterType.Unparsed)
-                .Description("Queries Google for an Image.\n Currently supported Methods `first,exact and random [default]`\n Example: gi exact 4 trees")
+                .Description("Queries Google for an Image.")
                 .Alias("gi")
                 .Do(async e =>
                 {
-                    int amt = 0;
-                    Methods res;
-
-                    var hasAmount = int.TryParse(e.Args[1], out amt);
-
-                    if (Enum.TryParse(e.Args[0], true, out res))
-                    {
-                        if (hasAmount)
-                            await GetImage(e.Args[2], e, res, amt);
-                        else
-                            await GetImage(e.Args[1], e, res);
-                    }
-                    else
-                    {
-                        await GetImage(e.Args[0], e, Methods.Random);
-                        //todo how to avoid gimages [number] [method] [text] ?
-                    }
-
-                    //todo: add Syntax checking?
+                    var url = await GetImage(e.Args[0]);
+                    await e.Channel.SendMessage(url);
                 });
             });
         }
 
-        private async Task GetImage(string txt, CommandEventArgs e, Methods method, int amount = 0)
+        private async Task<string> GetImage(string txt)
         {
-            JObject json;
-            string url = "";
+            var response = await Query(txt);
+            var json = JsonConvert.DeserializeObject(response.ToString()) as JObject;
+            var icount = json["items"].Count();
+            Random rnd = new Random();
+            var randin = rnd.Next(0, icount);
+            return (string)json["items"][randin]["link"];
 
-            switch (method)
-            {
-                case Methods.First:
-                    {
-                        var response = await Query(txt);
-                        json = JObject.Parse(response.ToString());
-                        url = (string)json["items"][0]["link"];
 
-                        break;
-                    }
-                case Methods.Exact:
-                    {
-                        var response = await Query(txt);
-                        json = JsonConvert.DeserializeObject(response.ToString()) as JObject;
-                        var icount = json["items"].Count();
-                        var amt = (amount > icount) ? icount : amount;
-                        url = (string)json["items"][amt]["link"];
-
-                        break;
-                    }
-                case Methods.Random:
-                    {
-                        var response = await Query(txt);
-                        json = JsonConvert.DeserializeObject(response.ToString()) as JObject;
-                        var icount = json["items"].Count();
-                        Random rnd = new Random();
-                        var randin = rnd.Next(0, icount);
-                        url = (string)json["items"][randin]["link"];
-
-                        break;
-                    }
-            }
-            await e.Channel.SendMessage(url);
-        }
-
-        private enum Methods
-        {
-            First,
-            Exact,
-            Random
         }
 
         private async Task<string> Query(string txt)
