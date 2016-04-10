@@ -92,5 +92,17 @@ namespace DiscordBot
         private TwitterSettings _twitter = new TwitterSettings();
 
         public static TwitterSettings Twitter => _instance._twitter;
+
+        //Google
+        public class GoogleSettings
+        {
+            [JsonProperty("apikey")]
+            public string ApiKey;
+        }
+
+        [JsonProperty("google")]
+        private GoogleSettings _google = new GoogleSettings();
+
+        public static GoogleSettings Google => _instance._google;
     }
 }

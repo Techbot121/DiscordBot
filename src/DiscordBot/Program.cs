@@ -6,6 +6,7 @@ using DiscordBot.Modules.Admin;
 using DiscordBot.Modules.Colors;
 using DiscordBot.Modules.Feeds;
 using DiscordBot.Modules.Github;
+using DiscordBot.Modules.GImages;
 using DiscordBot.Modules.Modules;
 using DiscordBot.Modules.Public;
 using DiscordBot.Modules.Status;
@@ -71,6 +72,7 @@ namespace DiscordBot
             _client.AddModule<ColorsModule>("Colors", ModuleFilter.None);
             _client.AddModule<FeedModule>("Feeds", ModuleFilter.None);
             _client.AddModule<GithubModule>("Repos", ModuleFilter.None);
+            _client.AddModule<GImagesModule>("GImages", ModuleFilter.None);
             _client.AddModule<ModulesModule>("Modules", ModuleFilter.None);
             _client.AddModule<PublicModule>("Public", ModuleFilter.None);
             _client.AddModule<TwitchModule>("Twitch", ModuleFilter.None);
