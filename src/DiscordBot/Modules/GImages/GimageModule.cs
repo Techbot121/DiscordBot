@@ -93,7 +93,7 @@ namespace DiscordBot.Modules.GImages
                         break;
                     }
             }
-            await _client.Reply(e, url);
+            await e.Channel.SendMessage(url);
         }
 
         private enum Methods
