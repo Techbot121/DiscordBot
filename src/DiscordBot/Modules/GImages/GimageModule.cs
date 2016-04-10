@@ -29,6 +29,7 @@ namespace DiscordBot.Modules.GImages
                 .Parameter("method", ParameterType.Optional)
                 .Parameter("amount", ParameterType.Optional)
                 .Parameter("query", ParameterType.Unparsed)
+                .Alias("gi")
                 .Do(async e =>
                 {
                     int amt = 0;
