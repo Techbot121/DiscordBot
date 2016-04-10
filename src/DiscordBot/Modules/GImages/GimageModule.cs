@@ -29,6 +29,7 @@ namespace DiscordBot.Modules.GImages
                 .Parameter("method", ParameterType.Optional)
                 .Parameter("amount", ParameterType.Optional)
                 .Parameter("query", ParameterType.Unparsed)
+                .Description(@"Queries Google for an Image.\n Currently supported Methods `first,exact and random [default]`\n Example: gi exact 4 trees")
                 .Alias("gi")
                 .Do(async e =>
                 {
