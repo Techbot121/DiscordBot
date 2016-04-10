@@ -64,8 +64,8 @@ namespace DiscordBot.Modules.GImages
                 case Methods.First:
                     {
                         var response = await Query(txt);
-                        json = JsonConvert.DeserializeObject(response.ToString()) as JObject;
-                        url = (string)json["items"][0]["pagemap"]["cse_image"][0]["src"];
+                        json = JObject.Parse(response.ToString());
+                        url = (string)json["items"][0]["link"];
 
                         break;
                     }
@@ -75,7 +75,7 @@ namespace DiscordBot.Modules.GImages
                         json = JsonConvert.DeserializeObject(response.ToString()) as JObject;
                         var icount = json["items"].Count();
                         var amt = (amount > icount) ? icount : amount;
-                        url = (string)json["items"][amt]["pagemap"]["cse_image"][0]["src"];
+                        url = (string)json["items"][amt]["link"];
 
                         break;
                     }
@@ -86,7 +86,7 @@ namespace DiscordBot.Modules.GImages
                         var icount = json["items"].Count();
                         Random rnd = new Random();
                         var randin = rnd.Next(0, icount);
-                        url = (string)json["items"][randin]["pagemap"]["cse_image"][0]["src"];
+                        url = (string)json["items"][randin]["link"];
 
                         break;
                     }
@@ -109,7 +109,7 @@ namespace DiscordBot.Modules.GImages
             {
                 content = await _http.Send(
                     HttpMethod.Get,
-                    $"https://www.googleapis.com/customsearch/v1?key={GlobalSettings.Google.ApiKey}&cx=000079114482041444970:3mn1iffeztu&q={query}"
+                    $"https://www.googleapis.com/customsearch/v1?key={GlobalSettings.Google.ApiKey}&cx=000079114482041444970:3mn1iffeztu&searchType=image&q={query}"
                     );
             }
             catch (WebException ex)
