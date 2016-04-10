@@ -46,7 +46,7 @@ namespace DiscordBot.Modules.GImages
                     }
                     else
                     {
-                        await GetImage(e.Args[0], e, Methods.First);
+                        await GetImage(e.Args[0], e, Methods.Random);
                         //todo how to avoid gimages [number] [method] [text] ?
                     }
 
