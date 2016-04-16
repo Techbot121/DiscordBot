@@ -61,7 +61,7 @@ namespace DiscordBot.Modules.Sed
                    }
                    else
                    {
-                       if (BackLog.Count >= 20)
+                       if (BackLog.Count >= 50)
                        {
                            BackLog.Remove(BackLog.Keys.OrderBy(x => x.Timestamp).FirstOrDefault());
                        }
