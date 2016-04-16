@@ -9,6 +9,7 @@ using DiscordBot.Modules.Github;
 using DiscordBot.Modules.GImages;
 using DiscordBot.Modules.Modules;
 using DiscordBot.Modules.Public;
+using DiscordBot.Modules.Sed;
 using DiscordBot.Modules.Status;
 using DiscordBot.Modules.Twitch;
 using DiscordBot.Modules.TwitchEmotes;
@@ -76,6 +77,7 @@ namespace DiscordBot
             _client.AddModule<ModulesModule>("Modules", ModuleFilter.None);
             _client.AddModule<PublicModule>("Public", ModuleFilter.None);
             _client.AddModule<TwitchModule>("Twitch", ModuleFilter.None);
+            _client.AddModule<SedModule>("SedModule", ModuleFilter.None);
             _client.AddModule<StatusModule>("Status", ModuleFilter.None);
             _client.AddModule<TwitchEmotesModule>("TwitchEmotes", ModuleFilter.None);
             _client.AddModule<TwitterModule>("TwitterModule", ModuleFilter.None);
