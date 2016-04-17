@@ -26,7 +26,7 @@ namespace DiscordBot.Modules.GImages
             manager.CreateCommands("", group =>
             {
                 group.CreateCommand("gimage")
-                .Parameter("query", ParameterType.Multiple)
+                .Parameter("query", ParameterType.Unparsed)
                 .Description("Queries Google for an Image.")
                 .Alias("gi")
                 .Do(async e =>
