@@ -26,13 +26,20 @@ namespace DiscordBot.Modules.GImages
             manager.CreateCommands("", group =>
             {
                 group.CreateCommand("gimage")
-                .Parameter("query", ParameterType.Unparsed)
+                .Parameter("query", ParameterType.Multiple)
                 .Description("Queries Google for an Image.")
                 .Alias("gi")
                 .Do(async e =>
                 {
-                    var url = await GetImage(e.Args[0]);
-                    await e.Channel.SendMessage(url);
+                    if (e.Args.Any())
+                    {
+                        var url = await GetImage(e.Args[0]);
+                        await e.Channel.SendMessage(url);
+                    }
+                    else
+                    {
+                        await _client.ReplyError(e, "You need to specify what you want to search for.");
+                    }
                 });
             });
         }
