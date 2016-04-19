@@ -104,5 +104,17 @@ namespace DiscordBot
         private GoogleSettings _google = new GoogleSettings();
 
         public static GoogleSettings Google => _instance._google;
+
+        //Youtube
+        public class YoutubeSettings
+        {
+            [JsonProperty("apikey")]
+            public string ApiKey;
+        }
+
+        [JsonProperty("youtube")]
+        private YoutubeSettings _youtube = new YoutubeSettings();
+
+        public static YoutubeSettings Youtube => _instance._youtube;
     }
 }
