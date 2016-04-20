@@ -31,10 +31,10 @@ namespace DiscordBot.Modules.Youtube
                 .Alias("yt")
                 .Do(async e =>
                 {
-                    var query = e.Args[0];
-
-                    if (query.Any())
+                    if (e.Args[0].Any())
                     {
+                        var query = e.Args[0];
+
                         if (query.Contains("|"))
                         {
                             var split = query.Split('|');
@@ -135,7 +135,7 @@ namespace DiscordBot.Modules.Youtube
                             {
                                 if (videos.Count >= i)
                                     sb.Append($"https://youtu.be/{videos[i]}");
-                                    sb.AppendLine();
+                                sb.AppendLine();
                             }
                         else
                             sb.Append($"No Videos called {query} found.");
