@@ -32,7 +32,7 @@ namespace DiscordBot.Modules.Waifu2x
                 .Do(async e =>
                 {
                     int scale = 2;
-                    Noise noise = Noise.Medium;
+                    Noise noise = Noise.None;
 
                     if (e.Args[1] != "")
                     {
