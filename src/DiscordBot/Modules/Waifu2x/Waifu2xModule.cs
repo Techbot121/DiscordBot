@@ -89,6 +89,7 @@ namespace DiscordBot.Modules.Waifu2x
                                     File.WriteAllBytes(file, rb);
 
                                     await e.Channel.SendFile(file);
+                                    return; // do I even need this?
                                 }
                             }
                         }
