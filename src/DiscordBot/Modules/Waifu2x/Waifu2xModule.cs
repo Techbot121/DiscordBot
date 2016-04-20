@@ -25,7 +25,7 @@ namespace DiscordBot.Modules.Waifu2x
             {
                 group.CreateCommand("waifu2x")
                 .Alias("w2x")
-                .Description("Uploads image to waifu2x and returns it.\nIf no additional Parameters are specified, the default Values will be used `Noise: Medium` and `Scale 2x`")
+                .Description("Uploads image to waifu2x and returns it.\nIf no additional Parameters are specified, the default Values will be used `Noise: None` and `Scale 2x`")
                 .Parameter("image url", ParameterType.Required)
                 .Parameter("scale", ParameterType.Optional)
                 .Parameter("noise", ParameterType.Optional)
