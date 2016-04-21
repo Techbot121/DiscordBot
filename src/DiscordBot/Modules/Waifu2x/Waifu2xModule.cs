@@ -47,9 +47,9 @@ namespace DiscordBot.Modules.Waifu2x
                         await _client.ReplyError(e, "Max Amount is 3... Aborting.");
                         return;
                     }
-                    if (amount == 0)
+                    if (amount <= 0)
                     {
-                        await _client.ReplyError(e, "So you want to upscale `0` times huh?");
+                        await _client.ReplyError(e, $"So you want to upscale `{amount}` times huh?");
                         return;
                     }
 
