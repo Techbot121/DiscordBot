@@ -104,9 +104,10 @@ namespace DiscordBot.Modules.Waifu2x
                             {
                                 cli.QueryString = param;
                                 await _client.Reply(e, $"Trying to Upscale image `{amount}` {(amount == 1 ? "time" : "times...")}");
-                                for (int i = 0; i < amount; i++)
+
+                                try
                                 {
-                                    try
+                                    for (int i = 0; i < amount; i++)
                                     {
                                         Image image = Image.FromFile(file + ext);
                                         iw = image.Width;
@@ -140,14 +141,14 @@ namespace DiscordBot.Modules.Waifu2x
                                             await Task.Delay(1000);
                                         }
                                     }
-                                    catch (WebException)
-                                    {
-                                        throw;
-                                    }
-                                    finally
-                                    {
-                                        cli.Dispose();
-                                    }
+                                }
+                                catch (WebException)
+                                {
+                                    throw;
+                                }
+                                finally
+                                {
+                                    cli.Dispose();
                                 }
 
                                 await e.Channel.SendFile(file + ext);
