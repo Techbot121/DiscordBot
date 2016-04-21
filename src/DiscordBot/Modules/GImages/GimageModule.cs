@@ -4,6 +4,7 @@ using Discord.Modules;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Compat.Web;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -47,20 +48,17 @@ namespace DiscordBot.Modules.GImages
 
         private async Task<string> GetImage(string txt)
         {
-            byte[] bytes = Encoding.Default.GetBytes(txt);
-            var response = await Query(txt = Encoding.UTF8.GetString(bytes));
+            var response = await Query(txt);
             var json = JsonConvert.DeserializeObject(response.ToString()) as JObject;
             var icount = json["items"].Count();
             Random rnd = new Random();
             var randin = rnd.Next(0, icount);
             return (string)json["items"][randin]["link"];
-
-
         }
 
         private async Task<string> Query(string txt)
         {
-            string query = WebUtility.HtmlEncode(txt);
+            string query = HttpUtility.UrlEncode(txt, Encoding.UTF8);
             HttpContent content = null;
             try
             {
