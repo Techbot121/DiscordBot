@@ -58,7 +58,7 @@ namespace DiscordBot.Modules.GImages
 
         private async Task<string> Query(string txt)
         {
-            string query = HttpUtility.UrlEncode(txt, Encoding.UTF8);
+            string query = WebUtility.HtmlEncode(txt = Encoding.UTF8.GetString(Encoding.Default.GetBytes(txt)));
             HttpContent content = null;
             try
             {
