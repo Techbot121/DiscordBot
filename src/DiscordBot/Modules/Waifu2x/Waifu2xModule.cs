@@ -67,6 +67,11 @@ namespace DiscordBot.Modules.Waifu2x
 
                         if (ext == ".png" || ext == ".jpg" || ext == ".jepg") // ?? who uses bmp and shit anyway
                         {
+                            if (File.Exists("temp" + ext))
+                            {
+                                File.Delete("temp" + ext);
+                            }
+
                             try
                             {
                                 DownloadImage(uri.AbsoluteUri, "temp" + ext); // todo: Make this shit async
@@ -98,7 +103,6 @@ namespace DiscordBot.Modules.Waifu2x
                                         Image image = Image.FromFile(file + ext);
                                         iw = image.Width;
                                         ih = image.Height;
-
 
                                         if (ih >= 1500 || iw >= 1500) // need to check the actual values
                                         {
