@@ -3,6 +3,7 @@ using Discord.Commands;
 using Discord.Modules;
 using System;
 using System.Collections.Specialized;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -60,40 +61,66 @@ namespace DiscordBot.Modules.Waifu2x
 
                         if (ext == ".png" || ext == ".jpg" || ext == ".jepg") // ?? who uses bmp and shit anyway
                         {
-                            if (File.Exists("temp" + ext))
+                            try
                             {
-                                File.Delete("temp" + ext);
+                                DownloadImage(uri.AbsoluteUri, "temp" + ext); // todo: Make this shit async
                             }
-
-                            DownloadImage(uri.AbsoluteUri, "temp" + ext); // todo: Make this shit async
+                            catch (WebException ex)
+                            {
+                                await _client.ReplyError(e, "Something went wrong while downloading the Image.");
+                                _client.Log.Error("w2x", ex);
+                            }
 
                             NameValueCollection param = new NameValueCollection();
 
                             param.Add("scale", $"{scale}");
                             param.Add("noise", $"{(int)noise}");
 
+                            await _client.Reply(e, $"Trying to Upscale image `{amount}` {(amount == 1 ? "time" : "times...")}");
+
                             using (WebClient cli = new WebClient())
                             {
                                 string file = "temp";
+                                cli.QueryString = param;
 
                                 for (int i = 0; i < amount; i++)
                                 {
-                                    cli.QueryString = param;
-                                    var rb = cli.UploadFile(new Uri("http://waifu2x.udp.jp/api"), "temp" + ext);
-                                    string ft = cli.ResponseHeaders[HttpResponseHeader.ContentType];
-
-                                    if (ft != null)
+                                    try
                                     {
-                                        File.WriteAllBytes(file + ".png", rb);
+                                        Image image = Image.FromFile(file + ext);
 
-                                        ext = ".png"; // hack
+                                        if (image.Height >= 1500 || image.Width >= 1500) // need to check the actual values
+                                        {
+                                            await _client.ReplyError(e, $"File Dimensions are now {image.Width}x{image.Height}. This will probably not work... Aborting.");
+                                            return;
+                                        }
 
-                                        await Task.Delay(1000);
+                                        FileInfo fi = new FileInfo(file + ext);
+                                        if (fi.Length >= 3e+6)
+                                        {
+                                            await _client.ReplyError(e, "File exceeded 3Mb... aborting.");
+                                            return;
+                                        }
+
+                                        var rb = cli.UploadFile(new Uri("http://waifu2x.udp.jp/api"), "temp" + ext);
+                                        string ft = cli.ResponseHeaders[HttpResponseHeader.ContentType];
+
+                                        if (ft != null)
+                                        {
+                                            File.WriteAllBytes(file + ".png", rb);
+
+                                            ext = ".png"; // hack
+
+                                            await Task.Delay(1000);
+                                        }
+                                    }
+                                    catch (FileLoadException)
+                                    {
+                                        throw;
                                     }
                                 }
 
                                 await e.Channel.SendFile(file + ext);
-                                return; // do I even need this?
                             }
                         }
                         else
