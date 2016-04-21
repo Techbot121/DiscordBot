@@ -23,6 +23,8 @@ namespace DiscordBot.Modules.Waifu2x
             _client = manager.Client;
             _http = _client.GetService<HttpService>();
 
+            bool _isRunning = false;
+
             manager.CreateCommands("", group =>
             {
                 group.CreateCommand("waifu2x")
@@ -36,8 +38,6 @@ namespace DiscordBot.Modules.Waifu2x
                     int scale = 2;
                     int amount = 1;
                     Noise noise = Noise.None;
-
-                    bool _isRunning = false;
 
                     if (e.Args[1] != "")
                     {
