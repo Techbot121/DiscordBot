@@ -89,6 +89,8 @@ namespace DiscordBot.Modules.Waifu2x
                             {
                                 await _client.ReplyError(e, $"Something went wrong while downloading the Image.\n{ex.Message}");
                                 _client.Log.Error("w2x", ex);
+                                _isRunning = false;
+                                return;
                             }
 
                             NameValueCollection param = new NameValueCollection();
