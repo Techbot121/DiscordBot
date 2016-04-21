@@ -69,10 +69,9 @@ namespace DiscordBot.Modules.Waifu2x
 
                         if (ext == ".png" || ext == ".jpg" || ext == ".jepg") // ?? who uses bmp and shit anyway
                         {
-
-                            if(_isRunning)
+                            if (_isRunning)
                             {
-                                await _client.ReplyError(e,"I'm running w2x somewhere already, please try again later.");
+                                await _client.ReplyError(e, "I'm running w2x somewhere already, please try again later.");
                                 return;
                             }
 
@@ -97,16 +96,14 @@ namespace DiscordBot.Modules.Waifu2x
                             param.Add("scale", $"{scale}");
                             param.Add("noise", $"{(int)noise}");
 
-                            await _client.Reply(e, $"Trying to Upscale image `{amount}` {(amount == 1 ? "time" : "times...")}");
+                            string file = "temp";
+                            int ih = 0;
+                            int iw = 0;
 
-                            
                             using (WebClient cli = new WebClient())
                             {
-                                string file = "temp";
-                                int ih = 0;
-                                int iw = 0;
                                 cli.QueryString = param;
-
+                                await _client.Reply(e, $"Trying to Upscale image `{amount}` {(amount == 1 ? "time" : "times...")}");
                                 for (int i = 0; i < amount; i++)
                                 {
                                     try
@@ -143,9 +140,13 @@ namespace DiscordBot.Modules.Waifu2x
                                             await Task.Delay(1000);
                                         }
                                     }
-                                    catch (FileLoadException)
+                                    catch (WebException)
                                     {
                                         throw;
+                                    }
+                                    finally
+                                    {
+                                        cli.Dispose();
                                     }
                                 }
 
