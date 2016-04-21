@@ -44,9 +44,9 @@ namespace DiscordBot.Modules.Waifu2x
                         int.TryParse(e.Args[1], out amount);
                     }
 
-                    if (amount > 3)
+                    if (amount > 4)
                     {
-                        await _client.ReplyError(e, "Max Amount is 3... Aborting.");
+                        await _client.ReplyError(e, "Max Amount is 4... Aborting.");
                         return;
                     }
                     if (amount <= 0)
