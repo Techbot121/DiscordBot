@@ -88,7 +88,7 @@ namespace DiscordBot.Modules.Waifu2x
                             }
                             catch (WebException ex)
                             {
-                                await _client.ReplyError(e, $"Something went wrong while downloading the Image.\n{ex}");
+                                await _client.ReplyError(e, $"Something went wrong while downloading the Image.\n{ex.Message}");
                                 _client.Log.Error("w2x", ex);
                             }
 
