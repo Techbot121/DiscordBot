@@ -91,7 +91,8 @@ namespace DiscordBot.Modules.Waifu2x
 
                                         if (image.Height >= 1500 || image.Width >= 1500) // need to check the actual values
                                         {
-                                            await _client.ReplyError(e, $"File Dimensions are now {image.Width}x{image.Height}. This will probably not work... Aborting.");
+                                            await _client.ReplyError(e, $"File Dimensions are now {image.Width}x{image.Height}. This will probably not work... Aborting.\nLast successful Image:");
+                                            await e.Channel.SendFile(file + ext);
                                             return;
                                         }
 
