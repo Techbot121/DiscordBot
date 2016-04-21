@@ -87,6 +87,8 @@ namespace DiscordBot.Modules.Waifu2x
                             using (WebClient cli = new WebClient())
                             {
                                 string file = "temp";
+                                int ih = 0;
+                                int iw = 0;
                                 cli.QueryString = param;
 
                                 for (int i = 0; i < amount; i++)
@@ -94,11 +96,14 @@ namespace DiscordBot.Modules.Waifu2x
                                     try
                                     {
                                         Image image = Image.FromFile(file + ext);
+                                        ih = image.Height;
+                                        iw = image.Width;
 
-                                        if (image.Height >= 1500 || image.Width >= 1500) // need to check the actual values
+                                        if (ih >= 1500 || iw >= 1500) // need to check the actual values
                                         {
                                             await _client.ReplyError(e, $"File Dimensions are now {image.Width}x{image.Height}. This will probably not work... Aborting.\nLast successful Image:");
                                             await e.Channel.SendFile(file + ext);
+                                            await e.Channel.SendMessage($"New Resolution is: {ih}x{iw}");
                                             return;
                                         }
 
@@ -128,6 +133,7 @@ namespace DiscordBot.Modules.Waifu2x
                                 }
 
                                 await e.Channel.SendFile(file + ext);
+                                await e.Channel.SendMessage($"New Resolution is: {ih}x{iw}");
                             }
                         }
                         else
