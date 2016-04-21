@@ -101,9 +101,8 @@ namespace DiscordBot.Modules.Waifu2x
 
                                         if (ih >= 1500 || iw >= 1500) // need to check the actual values
                                         {
-                                            await _client.ReplyError(e, $"File Dimensions are now {image.Width}x{image.Height}. This will probably not work... Aborting.\nLast successful Image:");
+                                            await _client.ReplyError(e, $"File Dimensions are now {ih}x{iw}. This will probably not work... Aborting.\nLast successful Image:");
                                             await e.Channel.SendFile(file + ext);
-                                            await e.Channel.SendMessage($"New Resolution is: {ih}x{iw}");
                                             return;
                                         }
 
