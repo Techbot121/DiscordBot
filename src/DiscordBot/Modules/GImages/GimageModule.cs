@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace DiscordBot.Modules.GImages
@@ -46,7 +47,8 @@ namespace DiscordBot.Modules.GImages
 
         private async Task<string> GetImage(string txt)
         {
-            var response = await Query(txt);
+            byte[] bytes = Encoding.Default.GetBytes(txt);
+            var response = await Query(txt = Encoding.UTF8.GetString(bytes));
             var json = JsonConvert.DeserializeObject(response.ToString()) as JObject;
             var icount = json["items"].Count();
             Random rnd = new Random();
