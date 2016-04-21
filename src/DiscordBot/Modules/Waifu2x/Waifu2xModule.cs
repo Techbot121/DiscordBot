@@ -37,6 +37,8 @@ namespace DiscordBot.Modules.Waifu2x
                     int amount = 1;
                     Noise noise = Noise.None;
 
+                    bool _isRunning = false;
+
                     if (e.Args[1] != "")
                     {
                         int.TryParse(e.Args[1], out amount);
@@ -67,6 +69,14 @@ namespace DiscordBot.Modules.Waifu2x
 
                         if (ext == ".png" || ext == ".jpg" || ext == ".jepg") // ?? who uses bmp and shit anyway
                         {
+
+                            if(_isRunning)
+                            {
+                                await _client.ReplyError(e,"I'm running w2x somewhere already, please try again later.");
+                                return;
+                            }
+
+                            _isRunning = true;
                             if (File.Exists("temp" + ext))
                             {
                                 File.Delete("temp" + ext);
@@ -89,6 +99,7 @@ namespace DiscordBot.Modules.Waifu2x
 
                             await _client.Reply(e, $"Trying to Upscale image `{amount}` {(amount == 1 ? "time" : "times...")}");
 
+                            
                             using (WebClient cli = new WebClient())
                             {
                                 string file = "temp";
@@ -108,6 +119,7 @@ namespace DiscordBot.Modules.Waifu2x
                                         {
                                             await _client.ReplyError(e, $"File Dimensions are now {iw}x{ih}. This will probably not work... Aborting.\nLast successful Image:");
                                             await e.Channel.SendFile(file + ext);
+                                            _isRunning = false;
                                             return;
                                         }
 
@@ -115,6 +127,7 @@ namespace DiscordBot.Modules.Waifu2x
                                         if (fi.Length >= 3e+6)
                                         {
                                             await _client.ReplyError(e, "File exceeded 3Mb... aborting.");
+                                            _isRunning = false;
                                             return;
                                         }
 
@@ -138,6 +151,7 @@ namespace DiscordBot.Modules.Waifu2x
 
                                 await e.Channel.SendFile(file + ext);
                                 await e.Channel.SendMessage($"New Resolution is: {iw}x{ih}");
+                                _isRunning = false;
                             }
                         }
                         else
