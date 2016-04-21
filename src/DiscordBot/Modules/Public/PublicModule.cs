@@ -4,7 +4,9 @@ using Discord.Commands.Permissions.Levels;
 using Discord.Modules;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Net;
 
 namespace DiscordBot.Modules.Public
 {
@@ -111,6 +113,40 @@ namespace DiscordBot.Modules.Public
                     {
                         await e.Channel.SendMessage("http://www.myinstants.com/instant/pp/");
                     });
+
+                group.CreateCommand("setAvatar")
+                .Parameter("uri", ParameterType.Required)
+                .MinPermissions((int)PermissionLevel.BotOwner)
+                .Do(async e =>
+                {
+                    if (File.Exists("av.png"))
+                    {
+                        File.Delete("av.png");
+                    }
+                    using (WebClient w = new WebClient())
+                    {
+                        try
+                        {
+                            w.DownloadFile(new Uri(e.Args[0]), "av.png");
+                        }
+                        catch (WebException ex)
+                        {
+                            _client.Log.Error("Avatar", ex);
+                            throw;
+                        }
+                        finally
+                        {
+                            w.Dispose();
+                        }
+                    }
+                    if (!File.Exists("av.png"))
+                    {
+                        return;
+                    }
+                    var asd = File.OpenRead("av.png");
+                    await _client.CurrentUser.Edit("", null, null, null, asd);
+                    asd.Close();
+                });
             });
         }
 
