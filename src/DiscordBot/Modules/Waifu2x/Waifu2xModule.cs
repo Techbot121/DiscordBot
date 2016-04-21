@@ -6,6 +6,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace DiscordBot.Modules.Waifu2x
 {
@@ -25,18 +26,24 @@ namespace DiscordBot.Modules.Waifu2x
             {
                 group.CreateCommand("waifu2x")
                 .Alias("w2x")
-                .Description("Uploads image to waifu2x and returns it.\nIf no additional Parameters are specified, the default Values will be used `Noise: None` and `Scale 2x`")
+                .Description("Uploads image to waifu2x and returns it.\nIf no additional Parameters are specified, the default Values will be used `Noise: None` and `Amount 1x`")
                 .Parameter("image url", ParameterType.Required)
-                .Parameter("scale", ParameterType.Optional)
+                .Parameter("amount", ParameterType.Optional)
                 .Parameter("noise", ParameterType.Optional)
                 .Do(async e =>
                 {
                     int scale = 2;
+                    int amount = 1;
                     Noise noise = Noise.None;
 
                     if (e.Args[1] != "")
                     {
-                        int.TryParse(e.Args[1], out scale);
+                        int.TryParse(e.Args[1], out amount);
+                    }
+
+                    if (amount > 3)
+                    {
+                        await _client.ReplyError(e, "Max Amount is 3... Aborting."); return;
                     }
 
                     if (e.Args[2] != "")
@@ -67,30 +74,26 @@ namespace DiscordBot.Modules.Waifu2x
 
                             using (WebClient cli = new WebClient())
                             {
-                                cli.QueryString = param;
-                                var rb = cli.UploadFile(new Uri("http://waifu2x.udp.jp/api"), "temp" + ext);
-                                string ft = cli.ResponseHeaders[HttpResponseHeader.ContentType];
                                 string file = "temp";
-                                if (ft != null)
+
+                                for (int i = 0; i < amount; i++)
                                 {
-                                    switch (ft)
+                                    cli.QueryString = param;
+                                    var rb = cli.UploadFile(new Uri("http://waifu2x.udp.jp/api"), "temp" + ext);
+                                    string ft = cli.ResponseHeaders[HttpResponseHeader.ContentType];
+
+                                    if (ft != null)
                                     {
-                                        case "image/jpeg":
-                                            file += ".jpg";
-                                            break;
+                                        File.WriteAllBytes(file + ".png", rb);
 
-                                        case "image/png":
-                                            file += ".png";
-                                            break;
+                                        ext = ".png"; // hack
 
-                                        default:
-                                            break;
+                                        await Task.Delay(1000);
                                     }
-                                    File.WriteAllBytes(file, rb);
-
-                                    await e.Channel.SendFile(file);
-                                    return; // do I even need this?
                                 }
+
+                                await e.Channel.SendFile(file + ext);
+                                return; // do I even need this?
                             }
                         }
                         else
