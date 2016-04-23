@@ -88,7 +88,7 @@ namespace DiscordBot.Modules.Waifu2x
                             int ih = 0;
                             int iw = 0;
 
-                            await _client.Reply(e, $"Trying to Upscale image {(amount == 1 ? "once..." : "`" + amount + "` times...")}");
+                            await _client.Reply(e, $"Trying to Upscale {(amount == 1 ? "once..." : "`" + amount + "` times...")}");
 
                             try
                             {
@@ -112,7 +112,7 @@ namespace DiscordBot.Modules.Waifu2x
                                         FileInfo fi = new FileInfo(file);
                                         if (fi.Length >= 3e+6)
                                         {
-                                            await _client.ReplyError(e, "File exceeded 3Mb... aborting.");
+                                            await _client.ReplyError(e, "File exceeded 3Mb (waifu2x upload limit)... aborting.");
                                             return;
                                         }
                                     }
