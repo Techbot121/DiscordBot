@@ -152,6 +152,7 @@ namespace DiscordBot.Modules.Waifu2x
                             catch (WebException ex)
                             {
                                 await _client.ReplyError(e, ex.Message);
+                                return;
                             }
                         }
                         else
