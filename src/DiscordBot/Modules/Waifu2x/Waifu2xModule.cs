@@ -67,7 +67,7 @@ namespace DiscordBot.Modules.Waifu2x
 
                             string guid = Guid.NewGuid().ToString();
 
-                            string file = "temp" + guid + ext;
+                            string file = "w2x_tmp" + guid + ext;
 
                             try
                             {
