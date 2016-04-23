@@ -23,8 +23,6 @@ namespace DiscordBot.Modules.Waifu2x
             _client = manager.Client;
             _http = _client.GetService<HttpService>();
 
-            bool _isRunning = false;
-
             manager.CreateCommands("", group =>
             {
                 group.CreateCommand("waifu2x")
@@ -35,61 +33,50 @@ namespace DiscordBot.Modules.Waifu2x
                 .Parameter("noise", ParameterType.Optional)
                 .Do(async e =>
                 {
-                    int scale = 2;
-                    int amount = 1;
-                    Noise noise = Noise.None;
-
-                    if (e.Args[1] != "")
+                    if (e.Args.Any())
                     {
-                        int.TryParse(e.Args[1], out amount);
-                    }
+                        var uri = e.Args[0];
+                        int scale = 2;
+                        int amount = 1;
+                        Noise noise = Noise.None;
 
-                    if (amount > 4)
-                    {
-                        await _client.ReplyError(e, "Max Amount is 4... Aborting.");
-                        return;
-                    }
-                    if (amount <= 0)
-                    {
-                        await _client.ReplyError(e, $"So you want to upscale `{amount}` times huh?");
-                        return;
-                    }
-
-                    if (e.Args[2] != "")
-                    {
-                        noise = ParseEnum<Noise>(e.Args[2]);
-                    }
-
-                    Uri uri;
-                    var isUri = Uri.TryCreate(e.Args[0], UriKind.Absolute, out uri) && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
-
-                    if (e.Args[0].Any() && isUri)
-                    {
-                        var ext = Path.GetExtension(uri.AbsolutePath);
-
-                        if (ext == ".png" || ext == ".jpg" || ext == ".jepg") // ?? who uses bmp and shit anyway
+                        if (e.Args[1] != "")
                         {
-                            if (_isRunning)
-                            {
-                                await _client.ReplyError(e, "I'm running w2x somewhere already, please try again later.");
-                                return;
-                            }
+                            int.TryParse(e.Args[1], out amount);
+                        }
 
-                            _isRunning = true;
-                            if (File.Exists("temp" + ext))
-                            {
-                                File.Delete("temp" + ext);
-                            }
+                        if (amount > 4)
+                        {
+                            await _client.ReplyError(e, "Maximum allowed amount is currently 4... Aborting.");
+                            return;
+                        }
+                        if (amount <= 0)
+                        {
+                            await _client.ReplyError(e, $"So you want to upscale `{amount}` times huh?");
+                            return;
+                        }
+
+                        if (e.Args[2] != "")
+                        {
+                            noise = ParseEnum<Noise>(e.Args[2]);
+                        }
+
+                        if (uri.Any() && await isImage(e.Args[0]))
+                        {
+                            var ext = await getImageExtension(e.Args[0]);
+
+                            string guid = Guid.NewGuid().ToString();
+
+                            string file = "temp" + guid + ext;
 
                             try
                             {
-                                DownloadImage(uri.AbsoluteUri, "temp" + ext); // todo: Make this shit async
+                                await DownloadImage(uri, file);
                             }
                             catch (WebException ex)
                             {
-                                await _client.ReplyError(e, $"Something went wrong while downloading the Image.\n{ex.Message}");
+                                await _client.ReplyError(e, ex.Message);
                                 _client.Log.Error("w2x", ex);
-                                _isRunning = false;
                                 return;
                             }
 
@@ -98,74 +85,83 @@ namespace DiscordBot.Modules.Waifu2x
                             param.Add("scale", $"{scale}");
                             param.Add("noise", $"{(int)noise}");
 
-                            string file = "temp";
                             int ih = 0;
                             int iw = 0;
 
-                            using (WebClient cli = new WebClient())
-                            {
-                                cli.QueryString = param;
-                                await _client.Reply(e, $"Trying to Upscale image `{amount}` {(amount == 1 ? "time" : "times...")}");
+                            await _client.Reply(e, $"Trying to Upscale image {(amount == 1 ? "once..." : "`" + amount + "' times...")}");
 
-                                try
+                            try
+                            {
+                                for (int i = 0; i < amount; i++)
                                 {
-                                    for (int i = 0; i < amount; i++)
+                                    if (File.Exists(file))
                                     {
-                                        Image image = Image.FromFile(file + ext);
-                                        iw = image.Width;
-                                        ih = image.Height;
+                                        using (Image image = Image.FromFile(file))
+                                        {
+                                            iw = image.Width;
+                                            ih = image.Height;
+                                        }
 
                                         if (ih >= 1500 || iw >= 1500) // need to check the actual values
                                         {
                                             await _client.ReplyError(e, $"File Dimensions are now {iw}x{ih}. This will probably not work... Aborting.\nLast successful Image:");
-                                            await e.Channel.SendFile(file + ext);
-                                            _isRunning = false;
+                                            await e.Channel.SendFile(file);
                                             return;
                                         }
 
-                                        FileInfo fi = new FileInfo(file + ext);
+                                        FileInfo fi = new FileInfo(file);
                                         if (fi.Length >= 3e+6)
                                         {
                                             await _client.ReplyError(e, "File exceeded 3Mb... aborting.");
-                                            _isRunning = false;
                                             return;
                                         }
+                                    }
+                                    using (WebClient cli = new WebClient())
+                                    {
+                                        cli.QueryString = param;
+                                        var rb = cli.UploadFile(new Uri("http://waifu2x.udp.jp/api"), file);
 
-                                        var rb = cli.UploadFile(new Uri("http://waifu2x.udp.jp/api"), "temp" + ext);
                                         string ft = cli.ResponseHeaders[HttpResponseHeader.ContentType];
 
                                         if (ft != null)
                                         {
-                                            File.WriteAllBytes(file + ".png", rb);
+                                            try
+                                            {
+                                                File.WriteAllBytes(file, rb);
+                                            }
+                                            catch (IOException ex)
+                                            {
+                                                _client.Log.Error("w2x", ex);
+                                                await _client.ReplyError(e, ex.Message);
+                                                return;
+                                            }
 
-                                            ext = ".png"; // hack
-
-                                            await Task.Delay(1000);
+                                            await Task.Delay(1000); // lets not rape their servers
+                                        }
+                                        else
+                                        {
+                                            await _client.ReplyError(e, "Got an empty reponse from waifu2x, aborting... Please try again later (or now, I'm a bot not a cop).");
+                                            return;
                                         }
                                     }
                                 }
-                                catch (WebException)
-                                {
-                                    throw;
-                                }
-                                finally
-                                {
-                                    cli.Dispose();
-                                }
-
-                                await e.Channel.SendFile(file + ext);
+                                await e.Channel.SendFile(file);
                                 await e.Channel.SendMessage($"New Resolution is: {iw}x{ih}");
-                                _isRunning = false;
+                                File.Delete(file);
+                            }
+                            catch (WebException ex)
+                            {
+                                await _client.ReplyError(e, ex.Message);
                             }
                         }
                         else
                         {
-                            await _client.ReplyError(e, "that file doesn't seem to be an image!");
+                            await _client.ReplyError(e, "That doesn't seem to be an image...");
                         }
                     }
                     else
                     {
-                        await _client.ReplyError(e, "No ImageUrl specified");
+                        await _client.Reply(e, "Usage: `w2x <link> [amount (max is 4)] [noiselevel 0-3]`");
                     }
                 });
             });
@@ -179,29 +175,71 @@ namespace DiscordBot.Modules.Waifu2x
             Highest
         }
 
-        private static void DownloadImage(string uri, string file)  // todo: Make this shit async
+        private async Task DownloadImage(string uri, string file)
         {
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(uri);
-            HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
+            using (HttpWebResponse resp = (HttpWebResponse)await req.GetResponseAsync())
 
-            if ((resp.StatusCode == HttpStatusCode.OK ||
-                    resp.StatusCode == HttpStatusCode.Moved ||
-                    resp.StatusCode == HttpStatusCode.Redirect) &&
-                    resp.ContentType.StartsWith("image", StringComparison.OrdinalIgnoreCase))
-            {
-                using (Stream inp = resp.GetResponseStream())
-                using (Stream outp = File.OpenWrite(file))
+                if ((resp.StatusCode == HttpStatusCode.OK ||
+                        resp.StatusCode == HttpStatusCode.Moved ||
+                        resp.StatusCode == HttpStatusCode.Redirect) &&
+                        resp.ContentType.StartsWith("image", StringComparison.OrdinalIgnoreCase))
                 {
-                    byte[] buffer = new byte[4096];
-                    int br;
-                    do
+                    using (Stream inp = resp.GetResponseStream())
+                    using (Stream outp = File.OpenWrite(file))
                     {
-                        br = inp.Read(buffer, 0, buffer.Length);
-                        outp.Write(buffer, 0, br);
-                    } while (br != 0);
+                        try
+                        {
+                            byte[] buffer = new byte[4096];
+                            int br;
+                            do
+                            {
+                                br = await inp.ReadAsync(buffer, 0, buffer.Length);
+                                await outp.WriteAsync(buffer, 0, br);
+                            } while (br != 0);
+                        }
+                        catch (IOException ex)
+                        {
+                            _client.Log.Error("w2x", ex);
+                        }
+                    }
+                }
+        }
+
+        private async Task<bool> isImage(string uri)
+        {
+            var r = (HttpWebRequest)WebRequest.Create(uri);
+            r.Method = "HEAD";
+            using (var res = await r.GetResponseAsync())
+            {
+                return res.ContentType.ToLower().StartsWith("image/");
+            }
+        }
+
+        private async Task<string> getImageExtension(string uri)
+        {
+            var r = (HttpWebRequest)WebRequest.Create(uri);
+            r.Method = "HEAD";
+            using (var res = await r.GetResponseAsync())
+            {
+                switch (res.ContentType)
+                {
+                    case "image/jpeg":
+                        return ".jpg";
+
+                    case "image/png":
+                        return ".png";
+
+                    case "image/gif":
+                        return ".gif";
+
+                    default:
+                        return ""; // idk what happens when this happens
                 }
             }
         }
+
+        private static byte[] GetUploadedFile(object s, UploadFileCompletedEventArgs e) => e.Result; // todo: check for errors if upload fails or something
 
         public static T ParseEnum<T>(string value) => (T)Enum.Parse(typeof(T), value, true);
     }
