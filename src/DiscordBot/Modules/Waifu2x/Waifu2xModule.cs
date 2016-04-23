@@ -88,7 +88,7 @@ namespace DiscordBot.Modules.Waifu2x
                             int ih = 0;
                             int iw = 0;
 
-                            await _client.Reply(e, $"Trying to Upscale image {(amount == 1 ? "once..." : "`" + amount + "' times...")}");
+                            await _client.Reply(e, $"Trying to Upscale image {(amount == 1 ? "once..." : "`" + amount + "` times...")}");
 
                             try
                             {
