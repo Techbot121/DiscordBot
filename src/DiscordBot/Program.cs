@@ -3,6 +3,7 @@ using Discord.Commands;
 using Discord.Commands.Permissions.Levels;
 using Discord.Modules;
 using DiscordBot.Modules.Admin;
+using DiscordBot.Modules.Caption;
 using DiscordBot.Modules.Colors;
 using DiscordBot.Modules.Feeds;
 using DiscordBot.Modules.Github;
@@ -73,6 +74,7 @@ namespace DiscordBot
             _client.AddService<HttpService>();
 
             _client.AddModule<AdminModule>("Admin", ModuleFilter.None);
+            _client.AddModule<CaptionModule>("Captions", ModuleFilter.None);
             _client.AddModule<ColorsModule>("Colors", ModuleFilter.None);
             _client.AddModule<FeedModule>("Feeds", ModuleFilter.None);
             _client.AddModule<GithubModule>("Repos", ModuleFilter.None);
