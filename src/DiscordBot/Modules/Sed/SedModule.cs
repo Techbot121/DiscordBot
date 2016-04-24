@@ -27,12 +27,12 @@ namespace DiscordBot.Modules.Sed
            {
                try
                { 
-                   if (Regex.IsMatch(e.Message.Text, @"s/.*/.*/"))
+                   if (Regex.IsMatch(e.Message.Text, @"\bs/.*/.*/"))
                    {
                        string om = e.Message.Text;
                        /// ???????????
-                       string what = Regex.Match(om, @"s/(.*)/.*/").Groups[1].Value;
-                       string repl = Regex.Match(om, @"s/.*/(.*)/").Groups[1].Value;
+                       string what = Regex.Match(om, @"\bs/(.*)/.*/").Groups[1].Value;
+                       string repl = Regex.Match(om, @"\bs/.*/(.*)/").Groups[1].Value;
                        /// ???????????
                        var result = BackLog.OrderBy(x => x.Key.Timestamp).Where(x => x.Key.Text.Split(null).Contains(what));
 
