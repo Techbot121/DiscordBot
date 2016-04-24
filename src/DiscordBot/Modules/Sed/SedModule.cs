@@ -52,7 +52,7 @@ namespace DiscordBot.Modules.Sed
                            else
                            {
                                sb.Clear();
-                               sb.Append($"{Format.Bold(e.Message.User.Name)} thinks {Format.Bold(msgusr.Name)} meant to say: {Format.Italics(replacement.Trim(' '))}");
+                               sb.Append($"{Format.Bold(e.Message.User.Name)} thinks {Format.Bold(msgusr.Name)} meant to say: {Format.Italics(replacement.Trim())}");
                            }
                            await e.Channel.SendMessage(sb.ToString());
                        }
