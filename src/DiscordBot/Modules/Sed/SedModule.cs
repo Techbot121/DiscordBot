@@ -47,7 +47,7 @@ namespace DiscordBot.Modules.Sed
                            if (e.Message.User == msgusr)
                            {
                                sb.Clear();
-                               sb.Append($"{Format.Bold(e.Message.User.Name)} meant to say: {Format.Italics(replacement)}");
+                               sb.Append($"{Format.Bold(e.Message.User.Name)} meant to say: {Format.Italics(replacement.Trim())}");
                            }
                            else
                            {
