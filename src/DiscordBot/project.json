@@ -44,6 +44,7 @@
         "Discord.Net.Commands": "0.9.0-rc3-1",
         "Discord.Net.Modules": "0.9.0-rc3",
         "Google.Apis.YouTube.v3": "1.12.0.461",
+        "ImageProcessor": "2.3.3",
         "Newtonsoft.Json": "8.0.1",
         "TweetMoaSharp": "3.0.0.15"
     },

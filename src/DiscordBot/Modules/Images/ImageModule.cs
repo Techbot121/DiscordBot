@@ -1,17 +1,21 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.Modules;
+using ImageProcessor;
+using ImageProcessor.Imaging;
+using ImageProcessor.Imaging.Formats;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace DiscordBot.Modules.Caption
+namespace DiscordBot.Modules.Images
 {
-    internal class CaptionModule : IModule
+    internal class ImagesModule : IModule
     {
         private ModuleManager _manager;
         private DiscordClient _client;
@@ -23,22 +27,33 @@ namespace DiscordBot.Modules.Caption
             _client = manager.Client;
             _http = _client.GetService<HttpService>();
 
-            manager.CreateCommands("", group =>
+            manager.CreateCommands("image", group =>
             {
                 group.CreateCommand("caption")
-                .Parameter("url to image", ParameterType.Required)
+                .Parameter("uri", ParameterType.Required)
                 .Parameter("text", ParameterType.Unparsed)
-                .Description("Adds text to an Image.")
+                .Description("Adds text to an Image.\n<`uri`> ⦗`color`⦘ ⦗`alpha`⦘ ⦗`position`⦘ ⦗`fontsize`⦘ ⦗`dropshadow`⦘\nExample usage:\n⦗`cap http://myimage.png red 0.5 center arial 12 1 hello world`⦘\n⦗`cap http://myimage.png hello world`⦘")
                 .Alias("cap")
                 .Do(async e =>
                 {
+                    MatchCollection match = Regex.Matches(e.Args[1], "(?<=^|\\ )([^\\s\\\"=]+)=(\\\"[^\\\"]*\\\"|[^\\s\\\"]+)(?=$|\\ )");
+
+                    Dictionary<string, string> args = new Dictionary<string, string>();
+
+                    if (match.Count > 0)
+                    {
+                        foreach (Match m in match)
+                        {
+                            args.Add(m.Groups[1]?.Value.Replace("\"", ""), m.Groups[2]?.Value.Replace("\"", ""));
+                        }
+                    }
+
                     if (e.Args.Any())
                     {
                         string uri = e.Args[0];
 
-                        if (e.Args[1].Any())
+                        if (args.Any())
                         {
-                            string text = e.Args[1];
                             if (await isImage(uri))
                             {
                                 string file = "cap_tmp" + Guid.NewGuid().ToString() + await getImageExtension(uri);
@@ -49,36 +64,43 @@ namespace DiscordBot.Modules.Caption
                                 }
                                 catch (WebException ex)
                                 {
+                                    await _client.ReplyError(e, ex.Message);
                                     _client.Log.Error("captions", ex);
+
+                                    if (File.Exists(file))
+                                    {
+                                        File.Delete(file);
+                                    }
                                     return;
                                 }
 
                                 if (File.Exists(file))
                                 {
-                                    Bitmap bmp = (Bitmap)Image.FromFile(file);
+                                    byte[] pb = File.ReadAllBytes(file);
 
-                                    using (Graphics g = Graphics.FromImage(bmp))
+                                    var asd = new TextLayer();
+                                    asd.Text = args?["text"];
+                                    asd.FontColor = args.ContainsKey("color") ? System.Drawing.Color.FromName(args["color"]) : System.Drawing.Color.White;
+                                    asd.FontFamily = args.ContainsKey("font") ? FontFamily.Families.Where(x => x.Name == args["font"]).FirstOrDefault() : FontFamily.GenericSerif;
+                                    asd.DropShadow = args.ContainsKey("dropshadow") ? bool.Parse(args["dropshadow"]) : false;
+                                    // asd.Position = Point.Empty;
+                                    asd.Opacity = args.ContainsKey("opacity") ? int.Parse(args["opacity"]) : 100;
+                                    asd.Style = args.ContainsKey("style") ? (FontStyle)Enum.Parse(typeof(FontStyle), args["style"], true) : FontStyle.Regular;
+                                    asd.FontSize = args.ContainsKey("size") ? int.Parse(args["size"]) : 20;
+
+                                    ISupportedImageFormat format = new PngFormat { Quality = 100 };
+
+                                    using (MemoryStream ins = new MemoryStream(pb))
+                                    using (MemoryStream outs = new MemoryStream())
+                                    using (ImageFactory iff = new ImageFactory())
                                     {
-                                        using (Font f = new Font("Arial", 20))
-                                        {
-                                            float w = bmp.Width;
-                                            float h = bmp.Height;
-
-                                            StringFormat sf = new StringFormat();
-                                            sf.Alignment = StringAlignment.Center;
-                                            sf.LineAlignment = StringAlignment.Center;
-
-                                            SizeF s = g.MeasureString(text, f);
-
-                                            g.DrawString(text, f, Brushes.Red, new PointF(w/2f, h - s.Height - 2f),sf);
-                                        }
+                                        iff.Load(ins)
+                                        .Watermark(asd)
+                                        .Format(format)
+                                        .Save(outs);
+                                        await e.Channel.SendFile("output.png", outs);
                                     }
-                                    bmp.Save("fuckio"+file, ImageFormat.Png);
-                                    bmp.Dispose();
-
-                                    await e.Channel.SendFile("fuckio" + file);
                                     File.Delete(file);
-                                    File.Delete("fuckio" + file);
                                 }
                                 else
                                 {
@@ -93,7 +115,8 @@ namespace DiscordBot.Modules.Caption
                         }
                         else
                         {
-                            await _client.ReplyError(e, "No Text provided, aborting...");
+                            await _client.ReplyError(e, "No Parameters provided, aborting...");
+                            return;
                         }
                     }
                     else

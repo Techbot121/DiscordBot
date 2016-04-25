@@ -3,11 +3,11 @@ using Discord.Commands;
 using Discord.Commands.Permissions.Levels;
 using Discord.Modules;
 using DiscordBot.Modules.Admin;
-using DiscordBot.Modules.Caption;
 using DiscordBot.Modules.Colors;
 using DiscordBot.Modules.Feeds;
-using DiscordBot.Modules.Github;
 using DiscordBot.Modules.GImages;
+using DiscordBot.Modules.Github;
+using DiscordBot.Modules.Images;
 using DiscordBot.Modules.Modules;
 using DiscordBot.Modules.Public;
 using DiscordBot.Modules.Sed;
@@ -21,7 +21,6 @@ using DiscordBot.Services;
 using System;
 using System.Text;
 using System.Threading.Tasks;
-
 
 namespace DiscordBot
 {
@@ -74,11 +73,12 @@ namespace DiscordBot
             _client.AddService<HttpService>();
 
             _client.AddModule<AdminModule>("Admin", ModuleFilter.None);
-            _client.AddModule<CaptionModule>("Captions", ModuleFilter.None);
+
             _client.AddModule<ColorsModule>("Colors", ModuleFilter.None);
             _client.AddModule<FeedModule>("Feeds", ModuleFilter.None);
             _client.AddModule<GithubModule>("Repos", ModuleFilter.None);
             _client.AddModule<GImagesModule>("GImages", ModuleFilter.None);
+            _client.AddModule<ImagesModule>("Images", ModuleFilter.None);
             _client.AddModule<ModulesModule>("Modules", ModuleFilter.None);
             _client.AddModule<PublicModule>("Public", ModuleFilter.None);
             _client.AddModule<TwitchModule>("Twitch", ModuleFilter.None);

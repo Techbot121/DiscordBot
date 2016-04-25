@@ -208,6 +208,6 @@ project.lock.json
 /src/DiscordBot/libopus.so
 /src/Private
 launchSettings.json
-/src/DiscordBot/temp.jpg
-/src/DiscordBot/temp.png
 /src/DiscordBot/av.png
+/src/DiscordBot/cap_*
+/src/DiscordBot/w2x_*

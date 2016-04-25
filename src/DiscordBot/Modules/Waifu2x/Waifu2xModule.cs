@@ -7,6 +7,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace DiscordBot.Modules.Waifu2x
@@ -23,11 +24,27 @@ namespace DiscordBot.Modules.Waifu2x
             _client = manager.Client;
             _http = _client.GetService<HttpService>();
 
-            manager.CreateCommands("", group =>
+            CancellationTokenSource cts = null;
+
+            manager.CreateCommands("w2x", group =>
             {
-                group.CreateCommand("waifu2x")
-                .Alias("w2x")
-                .Description("Uploads image to waifu2x and returns it.\nIf no additional Parameters are specified, the default Values will be used `Noise: None` and `Amount 1x`")
+                group.CreateCommand("abort")
+                .Description("aborts w2x")
+                .Do(async e =>
+                {
+                    await _client.Reply(e, "Trying to abort w2x now...");
+                    if (cts != null)
+                    {
+                        cts.Cancel();
+                    }
+                    else
+                    {
+                        await _client.ReplyError(e, "No w2x Operations running atm.");
+                    }
+                });
+
+                group.CreateCommand("")
+                .Description("Uploads image to waifu2x and returns it.\nIf no additional Parameters are specified, the default Values will be used `Smoothlevel: None` and `Amount 1x`")
                 .Parameter("image url", ParameterType.Required)
                 .Parameter("amount", ParameterType.Optional)
                 .Parameter("noise", ParameterType.Optional)
@@ -38,6 +55,7 @@ namespace DiscordBot.Modules.Waifu2x
                         var uri = e.Args[0];
                         int scale = 2;
                         int amount = 1;
+
                         Noise noise = Noise.None;
 
                         if (e.Args[1] != "")
@@ -80,80 +98,9 @@ namespace DiscordBot.Modules.Waifu2x
                                 return;
                             }
 
-                            NameValueCollection param = new NameValueCollection();
+                            cts = new CancellationTokenSource();
 
-                            param.Add("scale", $"{scale}");
-                            param.Add("noise", $"{(int)noise}");
-
-                            int ih = 0;
-                            int iw = 0;
-
-                            await _client.Reply(e, $"Trying to Upscale {(amount == 1 ? "once..." : "`" + amount + "` times...")}");
-
-                            try
-                            {
-                                for (int i = 0; i < amount; i++)
-                                {
-                                    if (File.Exists(file))
-                                    {
-                                        using (Image image = Image.FromFile(file))
-                                        {
-                                            iw = image.Width;
-                                            ih = image.Height;
-                                        }
-
-                                        if (ih >= 1500 || iw >= 1500) // need to check the actual values
-                                        {
-                                            await _client.ReplyError(e, $"File Dimensions are now {iw}x{ih}. This will probably not work... Aborting.\nLast successful Image:");
-                                            await e.Channel.SendFile(file);
-                                            return;
-                                        }
-
-                                        FileInfo fi = new FileInfo(file);
-                                        if (fi.Length >= 3e+6)
-                                        {
-                                            await _client.ReplyError(e, "File exceeded 3Mb (waifu2x upload limit)... aborting.");
-                                            return;
-                                        }
-                                    }
-                                    using (WebClient cli = new WebClient())
-                                    {
-                                        cli.QueryString = param;
-                                        var rb = cli.UploadFile(new Uri("http://waifu2x.udp.jp/api"), file);
-
-                                        string ft = cli.ResponseHeaders[HttpResponseHeader.ContentType];
-
-                                        if (ft != null)
-                                        {
-                                            try
-                                            {
-                                                File.WriteAllBytes(file, rb);
-                                            }
-                                            catch (IOException ex)
-                                            {
-                                                _client.Log.Error("w2x", ex);
-                                                await _client.ReplyError(e, ex.Message);
-                                                return;
-                                            }
-
-                                            await Task.Delay(1000); // lets not rape their servers
-                                        }
-                                        else
-                                        {
-                                            await _client.ReplyError(e, "Got an empty reponse from waifu2x, aborting... Please try again later (or now, I'm a bot not a cop).");
-                                            return;
-                                        }
-                                    }
-                                }
-                                await e.Channel.SendFile(file);
-                                await e.Channel.SendMessage($"New Resolution is: {iw}x{ih}");
-                                File.Delete(file);
-                            }
-                            catch (WebException ex)
-                            {
-                                await _client.ReplyError(e, ex.Message);
-                                return;
-                            }
+                            await W2xTask(e, amount, file, scale, noise, cts);
                         }
                         else
                         {
@@ -162,7 +109,7 @@ namespace DiscordBot.Modules.Waifu2x
                     }
                     else
                     {
-                        await _client.Reply(e, "Usage: `w2x <link> [amount (max is 4)] [noiselevel 0-3]`");
+                        await _client.Reply(e, "\nUsage:\n`w2x <link> [amount (max is 4)] [Smoothlevel none,medium,high,highest]`");
                     }
                 });
             });
@@ -237,6 +184,112 @@ namespace DiscordBot.Modules.Waifu2x
                     default:
                         return ""; // idk what happens when this happens
                 }
+            }
+        }
+
+        private async Task W2xTask(CommandEventArgs e, int amount, string file, int scale, Noise noise, CancellationTokenSource cts)
+        {
+            NameValueCollection param = new NameValueCollection();
+
+            param.Add("scale", $"{scale}");
+            param.Add("noise", $"{(int)noise}");
+
+            int ih = 0;
+            int iw = 0;
+            int done = 0;
+
+            await _client.Reply(e, $"Trying to Upscale {(amount == 1 ? "once..." : "⦗`" + amount + "`⦘ times...")}\nSmoothlevel: ⦗`{noise}`⦘\nto abort run ⦗`w2x abort`⦘.");
+
+            try
+            {
+                for (int i = 0; i < amount; i++)
+                {
+                    if (!cts.IsCancellationRequested)
+                    {
+                        done++;
+                        if (File.Exists(file))
+                        {
+                            using (Image image = Image.FromFile(file))
+                            {
+                                iw = image.Width;
+                                ih = image.Height;
+                            }
+
+                            if (ih >= 1600 || iw >= 1600) // need to check the actual values
+                            {
+                                await _client.ReplyError(e, $"File Dimensions are now ⦗`{done * 2}x ({iw}x{ih})`⦘. This will probably not work... Aborting.\nLast successful Image:");
+                                await e.Channel.SendFile(file);
+                                File.Delete(file);
+                                return;
+                            }
+
+                            FileInfo fi = new FileInfo(file);
+                            if (fi.Length >= 3e+6)
+                            {
+                                await _client.ReplyError(e, "File exceeded 3Mb (waifu2x upload limit)... aborting.");
+                                File.Delete(file);
+                                return;
+                            }
+                        }
+                        using (WebClient cli = new WebClient())
+                        {
+                            cli.QueryString = param;
+                            var rb = cli.UploadFile(new Uri("http://waifu2x.udp.jp/api"), file);
+
+                            string ft = cli.ResponseHeaders[HttpResponseHeader.ContentType];
+
+                            if (ft != null)
+                            {
+                                try
+                                {
+                                    File.WriteAllBytes(file, rb);
+                                }
+                                catch (IOException ex)
+                                {
+                                    _client.Log.Error("w2x", ex);
+                                    await _client.ReplyError(e, ex.Message);
+                                    return;
+                                }
+
+                                await Task.Delay(1000); // lets not rape their servers
+                            }
+                            else
+                            {
+                                await _client.ReplyError(e, "Got an empty reponse from waifu2x, aborting... Please try again later (or now, I'm a bot not a cop).");
+                                File.Delete(file);
+                                return;
+                            }
+                            if (done < amount)
+                            {
+                                await _client.Reply(e, $"Currently at ⦗`{done * 2}x`⦘");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        await _client.Reply(e, "Catched Abort command");
+                        File.Delete(file);
+                        return;
+                    }
+                }
+                await _client.Reply(e, $"New Resolution is:\n⦗`{done * 2}x ({iw}x{ih})`⦘");
+                await e.Channel.SendFile(file);
+                File.Delete(file);
+            }
+            catch (WebException ex)
+            {
+                await _client.ReplyError(e, ex.Message);
+                if (File.Exists(file))
+                {
+                    await _client.Reply(e, "Image before Error:");
+                    await e.Channel.SendFile(file);
+                    File.Delete(file);
+                }
+                return;
+            }
+            finally
+            {
+                cts = null;
             }
         }
 

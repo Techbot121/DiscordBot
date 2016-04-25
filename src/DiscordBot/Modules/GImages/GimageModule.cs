@@ -9,7 +9,6 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-
 namespace DiscordBot.Modules.GImages
 {
     internal class GImagesModule : IModule
