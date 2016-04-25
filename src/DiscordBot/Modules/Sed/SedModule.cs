@@ -47,12 +47,12 @@ namespace DiscordBot.Modules.Sed
                            if (e.Message.User == msgusr)
                            {
                                sb.Clear();
-                               sb.Append($"{Format.Bold(e.Message.User.Name)} meant to say: {Format.Italics(replacement.Trim())}");
+                               sb.Append($"{Format.Bold(e.Message.User.Name)} meant to say: {replacement.Trim()}");
                            }
                            else
                            {
                                sb.Clear();
-                               sb.Append($"{Format.Bold(e.Message.User.Name)} thinks {Format.Bold(msgusr.Name)} meant to say: {Format.Italics(replacement.Trim())}");
+                               sb.Append($"{Format.Bold(e.Message.User.Name)} thinks {Format.Bold(msgusr.Name)} meant to say: {replacement.Trim()}");
                            }
                            await e.Channel.SendMessage(sb.ToString());
                        }
