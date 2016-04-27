@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace DiscordBot.Modules.TwitchEmotes
 {
@@ -11,13 +12,20 @@ namespace DiscordBot.Modules.TwitchEmotes
     {
         private ModuleManager _manager;
         private DiscordClient _client;
-        private const string path = "./config/emotes/";
 
-        private string[] EmotePath = Directory.GetFiles(path, "*.png");
+        private const string TwitchPath = "./config/emotes/twitch/";
+        private const string FPPath = "./config/emotes/fp/";
 
-        private string[] Emotes = Directory
-                    .GetFiles(path, "*.png")
-                    .Select(Path.GetFileNameWithoutExtension).ToArray();
+        private string[] TwitchEmotePath = Directory.GetFiles(TwitchPath);
+        private string[] FPEmotePath = Directory.GetFiles(FPPath);
+
+        private string[] TwitchEmotes = Directory.EnumerateFiles(TwitchPath, "*", SearchOption.TopDirectoryOnly)
+            .Where(x => x.EndsWith(".png", System.StringComparison.OrdinalIgnoreCase) || x.EndsWith(".gif", System.StringComparison.OrdinalIgnoreCase) || x.EndsWith(".jpg", System.StringComparison.OrdinalIgnoreCase))
+            .Select(x => Path.GetFileNameWithoutExtension(x)).ToArray();
+
+        private string[] FPEmotes = Directory.EnumerateFiles(FPPath, "*", SearchOption.TopDirectoryOnly)
+            .Where(x => x.EndsWith(".png", System.StringComparison.OrdinalIgnoreCase) || x.EndsWith(".gif", System.StringComparison.OrdinalIgnoreCase) || x.EndsWith(".jpg", System.StringComparison.OrdinalIgnoreCase))
+            .Select(x => Path.GetFileNameWithoutExtension(x)).ToArray();
 
         void IModule.Install(ModuleManager manager)
         {
@@ -30,16 +38,16 @@ namespace DiscordBot.Modules.TwitchEmotes
                 {
                     var ma = e.Message.Text.Split(null);
 
-                    if (ma.Any(Emotes.Contains))
+                    if (ma.Any(TwitchEmotes.Contains))
                     {
-                        if (ma.Where(Emotes.Contains).Count() > 1 && ma.Where(Emotes.Contains).Count() < 10)
+                        if (ma.Where(TwitchEmotes.Contains).Count() > 1 && ma.Where(TwitchEmotes.Contains).Count() < 10)
                         {
-                            var emotes = ma.Where(Emotes.Contains);
+                            var emotes = ma.Where(TwitchEmotes.Contains);
                             var images = new List<Image>();
 
-                            foreach (string x in emotes)
+                            foreach (string emote in emotes)
                             {
-                                using (Stream stream = File.OpenRead(path + x + ".png"))
+                                using (Stream stream = File.OpenRead(TwitchEmotePath.Where(x => x.Contains(emote)).FirstOrDefault()))
                                 {
                                     Image image = Image.FromStream(stream, false, false);
                                     images.Add(image);
@@ -53,8 +61,19 @@ namespace DiscordBot.Modules.TwitchEmotes
                         }
                         else
                         {
-                            var emote = ma.Where(x => Emotes.Contains(x)).First();
-                            await e.Channel.SendFile(path + emote + ".png");
+                            var emote = ma.Where(x => TwitchEmotes.Contains(x)).First();
+                            await e.Channel.SendFile(TwitchEmotePath.Where(x => x.Contains(emote)).FirstOrDefault());
+                        }
+                    }
+                    if (ma.Any(x => Regex.IsMatch(x, "s?:[^:]*?:")))
+                    {
+                        // need to combine that shit into one lambda
+                        var wtf = ma.Select(x => x.Trim(':')).ToArray();
+                    
+                        if (wtf.Any(FPEmotes.Contains))
+                        {
+                            var emote = wtf.Where(x => FPEmotes.Contains(x)).First();
+                            await e.Channel.SendFile(FPEmotePath.Where(x => x.Contains(emote)).FirstOrDefault());
                         }
                     }
                 }
