@@ -24,11 +24,12 @@ namespace DiscordBot.Modules.GImages
             _client = manager.Client;
             _http = _client.GetService<HttpService>();
 
-            manager.CreateCommands("gi", group =>
+            manager.CreateCommands("g", group =>
             {
-                group.CreateCommand("")
+                group.CreateCommand("image")
                 .Parameter("query", ParameterType.Unparsed)
                 .Description("Queries Google for an Image.")
+                .Alias("i")
                 .Do(async e =>
                 {
                     if (e.Args.Any())
@@ -44,6 +45,7 @@ namespace DiscordBot.Modules.GImages
                 group.CreateCommand("first")
                 .Parameter("query", ParameterType.Unparsed)
                 .Description("Queries Google for an Image.")
+                .Alias("if")
                 .Do(async e =>
                 {
                     if (e.Args.Any())
