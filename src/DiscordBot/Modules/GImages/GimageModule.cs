@@ -9,6 +9,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+
 namespace DiscordBot.Modules.GImages
 {
     internal class GImagesModule : IModule
@@ -23,17 +24,31 @@ namespace DiscordBot.Modules.GImages
             _client = manager.Client;
             _http = _client.GetService<HttpService>();
 
-            manager.CreateCommands("", group =>
+            manager.CreateCommands("gi", group =>
             {
-                group.CreateCommand("gimage")
+                group.CreateCommand("")
                 .Parameter("query", ParameterType.Unparsed)
                 .Description("Queries Google for an Image.")
-                .Alias("gi")
                 .Do(async e =>
                 {
                     if (e.Args.Any())
                     {
-                        var url = await GetImage(e.Args[0]);
+                        var url = await GetImage(e.Args[0],true);
+                        await e.Channel.SendMessage(url);
+                    }
+                    else
+                    {
+                        await _client.ReplyError(e, "You need to specify what you want to search for.");
+                    }
+                });
+                group.CreateCommand("first")
+                .Parameter("query", ParameterType.Unparsed)
+                .Description("Queries Google for an Image.")
+                .Do(async e =>
+                {
+                    if (e.Args.Any())
+                    {
+                        var url = await GetImage(e.Args[0],false);
                         await e.Channel.SendMessage(url);
                     }
                     else
@@ -44,14 +59,21 @@ namespace DiscordBot.Modules.GImages
             });
         }
 
-        private async Task<string> GetImage(string txt)
+        private async Task<string> GetImage(string txt,bool random)
         {
             var response = await Query(txt);
             var json = JsonConvert.DeserializeObject(response.ToString()) as JObject;
-            var icount = json["items"].Count();
-            Random rnd = new Random();
-            var randin = rnd.Next(0, icount);
-            return (string)json["items"][randin]["link"];
+            if (random)
+            {
+                var icount = json["items"].Count();
+                Random rnd = new Random();
+                var randin = rnd.Next(0, icount);
+                return (string)json["items"][randin]["link"];
+            }
+            else
+            {
+                return (string)json["items"][0]["link"];
+            }
         }
 
         private async Task<string> Query(string txt)
