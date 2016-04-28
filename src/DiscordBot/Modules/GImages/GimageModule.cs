@@ -18,6 +18,8 @@ namespace DiscordBot.Modules.GImages
         private DiscordClient _client;
         private HttpService _http;
 
+        Random rnd = new Random();
+
         void IModule.Install(ModuleManager manager)
         {
             _manager = manager;
@@ -68,8 +70,7 @@ namespace DiscordBot.Modules.GImages
             if (random)
             {
                 var icount = json["items"].Count();
-                Random rnd = new Random();
-                var randin = rnd.Next(0, icount);
+                var randin = rnd.Next(icount);
                 return (string)json["items"][randin]["link"];
             }
             else
