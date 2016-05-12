@@ -15,7 +15,6 @@ namespace DiscordBot.Modules.Sed
         /// <summary>
         /// what the fuck is this even
         /// </summary>
-        /// <param name="manager"></param>
 
         void IModule.Install(ModuleManager manager)
         {
@@ -26,7 +25,7 @@ namespace DiscordBot.Modules.Sed
             _client.MessageReceived += async (s, e) =>
            {
                try
-               { 
+               {
                    if (Regex.IsMatch(e.Message.Text, @"\bs/.*/.*/"))
                    {
                        string om = e.Message.Text;
@@ -34,13 +33,14 @@ namespace DiscordBot.Modules.Sed
                        string what = Regex.Match(om, @"\bs/(.*)/.*/").Groups[1].Value;
                        string repl = Regex.Match(om, @"\bs/.*/(.*)/").Groups[1].Value;
                        /// ???????????
-                       var result = BackLog.OrderBy(x => x.Key.Timestamp).Where(x => x.Key.Text.Split(null).Contains(what));
+                       ///
+                       var result = BackLog.OrderBy(x => x.Key.Timestamp).Where(x => x.Key.Text.Contains(what)); ;
 
-                       if (result.Any())
+                       if (result.Any() && result.FirstOrDefault().Key.Channel == e.Channel)
                        {
                            var msgusr = result.FirstOrDefault().Key.User;
-                           string[] ssorg = result.FirstOrDefault().Key.Text.Split(null).Select(x => x.Replace(what, repl)).ToArray();
-                           string replacement = string.Join(" ", ssorg);
+                           // string[] ssorg = result.FirstOrDefault().Key.Text.Split(null).Select(x => x.Replace(what, repl)).ToArray(); // what the actual fuckk
+                           string replacement = Regex.Replace(result.FirstOrDefault().Key.Text, @"\b" + what + @"\b", repl, RegexOptions.IgnoreCase);
 
                            StringBuilder sb = new StringBuilder();
 
