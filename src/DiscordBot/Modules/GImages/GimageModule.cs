@@ -26,7 +26,7 @@ namespace DiscordBot.Modules.GImages
             _client = manager.Client;
             _http = _client.GetService<HttpService>();
 
-            manager.CreateCommands("g", group =>
+            manager.CreateCommands("google", group =>
             {
                 group.CreateCommand("image")
                 .Parameter("query", ParameterType.Unparsed)
@@ -44,9 +44,10 @@ namespace DiscordBot.Modules.GImages
                         await _client.ReplyError(e, "You need to specify what you want to search for.");
                     }
                 });
-                group.CreateCommand("first")
+                group.CreateCommand("firstimage")
                 .Parameter("query", ParameterType.Unparsed)
-                .Description("Queries Google for an Image.")
+                .Description("Queries Google for the first Image.")
+                .Alias("first")
                 .Alias("if")
                 .Do(async e =>
                 {
@@ -59,6 +60,18 @@ namespace DiscordBot.Modules.GImages
                     {
                         await _client.ReplyError(e, "You need to specify what you want to search for.");
                     }
+                });
+                group.CreateCommand("")
+                .Do(async e =>
+                {
+                    var sb = new StringBuilder();
+
+                    sb.Append("Example Usage:");
+                    sb.Append("`google [image/i] trees`");
+                    sb.Append("To only return the first found result use:");
+                    sb.Append("`google [firstimage/first/f] trees`");
+
+                    await _client.Reply(e,sb.ToString());
                 });
             });
         }
