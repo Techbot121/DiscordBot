@@ -66,9 +66,9 @@ namespace DiscordBot.Modules.GImages
                 {
                     var sb = new StringBuilder();
 
-                    sb.AppendLine("Example Usage:");
+                    sb.AppendLine("Example Usage:\n");
                     sb.AppendLine("`google [image/i] trees`");
-                    sb.AppendLine("To only return the first found result use:");
+                    sb.AppendLine("To only return the first found result use:\n");
                     sb.AppendLine("`google [firstimage/first/f] trees`");
 
                     await _client.Reply(e,sb.ToString());
