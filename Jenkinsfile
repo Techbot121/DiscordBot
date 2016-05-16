@@ -13,6 +13,7 @@ node {
             
             sh 'screen -X -S "hal1320" quit &'
             sh '''cd ~/repos/DiscordBot/src/DiscordBot/
+            	git pull
                 dnu restore
                 dnu build --configuration RELEASE''' // ditto
                 
@@ -26,8 +27,8 @@ node {
         }
         
     }
-    else 
-    {
+    else
+     {
         error 'NotImplemented'
     }
 }
