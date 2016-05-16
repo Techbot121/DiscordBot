@@ -31,6 +31,8 @@ namespace DiscordBot.Modules.GImages
                 group.CreateCommand("image")
                 .Parameter("query", ParameterType.Unparsed)
                 .Description("Queries Google for an Image.")
+                .Alias("images")
+                .Alias("img")
                 .Alias("i")
                 .Do(async e =>
                 {
@@ -48,7 +50,8 @@ namespace DiscordBot.Modules.GImages
                 .Parameter("query", ParameterType.Unparsed)
                 .Description("Queries Google for the first Image.")
                 .Alias("first")
-                .Alias("if")
+                .Alias("firstimg")
+                .Alias("f")
                 .Do(async e =>
                 {
                     if (e.Args.Any())
