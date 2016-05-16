@@ -26,8 +26,6 @@ namespace DiscordBot.Modules.GImages
             _client = manager.Client;
             _http = _client.GetService<HttpService>();
 
-            _client.GetService<CommandService>().CreateGroup("asd" );
-
             manager.CreateCommands("google", group =>
             {
                 group.CreateCommand("image")
@@ -64,7 +62,6 @@ namespace DiscordBot.Modules.GImages
                     }
                 });
                 group.CreateCommand("")
-                .Description("Queries Google.")
                 .Do(async e =>
                 {
                     var sb = new StringBuilder();
