@@ -38,6 +38,10 @@ namespace DiscordBot.Modules.TwitchEmotes
                 {
                     var ma = e.Message.Text.Split(null);
 
+                    var fpreg = Regex.Matches(e.Message.Text,@"s?:([^:]*?):");
+
+                    var fpemots = fpreg.Cast<Match>().SelectMany(x => x.Groups.Cast<Capture>().Skip(1).Select(y => y.Value)).ToList();
+
                     if (ma.Any(TwitchEmotes.Contains))
                     {
                         if (ma.Where(TwitchEmotes.Contains).Count() > 1 && ma.Where(TwitchEmotes.Contains).Count() < 10)
@@ -65,14 +69,33 @@ namespace DiscordBot.Modules.TwitchEmotes
                             await e.Channel.SendFile(TwitchEmotePath.Where(x => x.Contains(emote)).FirstOrDefault());
                         }
                     }
-                    if (ma.Any(x => Regex.IsMatch(x, "s?:[^:]*?:")))
+                    if (fpemots.Any())
                     {
-                        // need to combine that shit into one lambda
-                        var wtf = ma.Select(x => x.Trim(':')).ToArray();
-                    
-                        if (wtf.Any(FPEmotes.Contains))
+                        int fpcount = fpemots.Count();
+
+                        if (fpcount > 1 && fpcount < 10)
                         {
-                            var emote = wtf.Where(x => FPEmotes.Contains(x)).First();
+                            var emotes = fpemots.Where(FPEmotes.Contains);
+                            var images = new List<Image>();
+
+                            foreach (string emote in emotes)
+                            {
+                                using (Stream stream = File.OpenRead(FPEmotePath.Where(x => x.Contains(emote)).FirstOrDefault()))
+                                {
+                                    Image image = Image.FromStream(stream, false, false);
+                                    images.Add(image);
+                                }
+                            }
+                            // lol
+                            MergeImages(images).Save("fptmp.png");
+                            await e.Channel.SendFile("fptmp.png");
+                            File.Delete("fptmp.png");
+                            // lol
+                        }
+
+                        else
+                        {
+                            var emote = fpemots[0];
                             await e.Channel.SendFile(FPEmotePath.Where(x => x.Contains(emote)).FirstOrDefault());
                         }
                     }
