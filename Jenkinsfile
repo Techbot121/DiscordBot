@@ -9,7 +9,6 @@ node {
         
         withEnv(["PATH+DNX=/var/lib/jenkins/.dnx/runtimes/dnx-mono.1.0.0-rc1-update2/bin"]) // todo make this more flexible
         {
-            sleep 30 //so hal can post the github changes
             
             sh 'screen -X -S "hal1320" quit &'
             sh '''cd ~/repos/DiscordBot/src/DiscordBot/
