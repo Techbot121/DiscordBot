@@ -65,7 +65,7 @@ namespace DiscordBot.Modules.Sed
                        {
                            BackLog.Remove(BackLog.Keys.OrderBy(x => x.Timestamp).FirstOrDefault());
                        }
-                       BackLog.Add(e.Message, e.User);
+                       if (!e.Message.User.IsBot) { BackLog.Add(e.Message, e.User); }
                    }
                }
                catch { }

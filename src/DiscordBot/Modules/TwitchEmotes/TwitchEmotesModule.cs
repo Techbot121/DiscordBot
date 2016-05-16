@@ -38,7 +38,7 @@ namespace DiscordBot.Modules.TwitchEmotes
                 {
                     var ma = e.Message.Text.Split(null);
 
-                    var fpreg = Regex.Matches(e.Message.Text,@"s?:([^:]*?):");
+                    var fpreg = Regex.Matches(e.Message.Text, @"s?:([^:]*?):");
 
                     var fpemots = fpreg.Cast<Match>().SelectMany(x => x.Groups.Cast<Capture>().Skip(1).Select(y => y.Value)).ToList();
 
@@ -92,7 +92,6 @@ namespace DiscordBot.Modules.TwitchEmotes
                             File.Delete("fptmp.png");
                             // lol
                         }
-
                         else
                         {
                             var emote = fpemots[0];
