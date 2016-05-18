@@ -7,18 +7,18 @@ node {
     {
         stage 'Build'
         
-        withEnv(["PATH+DNX=/var/lib/jenkins/.dnx/runtimes/dnx-mono.1.0.0-rc1-update2/bin"]) // todo make this more flexible
+        withEnv(['DOTNET=/usr/local/bin/dotnet']) // todo make this more flexible
         {
             
             sh 'screen -X -S "hal1320" quit &'
             sh '''cd ~/repos/DiscordBot/src/DiscordBot/
             	git pull
-                dnu restore
-                dnu build --configuration RELEASE''' // ditto
+                $DOTNET restore
+                $DOTNET build''' // ditto
                 
             sh '''cd ~/repos/DiscordBot/src/DiscordBot/
                 BUILD_ID=dontKillMe
-                screen -dmS "hal1320" dnx run &''' // ditto
+                screen -dmS "hal1320" $DOTNET run &''' // ditto
                 
             stage 'Post-Build'
             step([$class: 'GitHubCommitStatusSetter', statusResultSource: [$class: 'ConditionalStatusResultSource', results: []]])
