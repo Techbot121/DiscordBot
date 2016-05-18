@@ -82,9 +82,9 @@ namespace DiscordBot
             _client.AddModule<ModulesModule>("Modules", ModuleFilter.None);
             _client.AddModule<PublicModule>("Public", ModuleFilter.None);
             _client.AddModule<TwitchModule>("Twitch", ModuleFilter.None);
-            _client.AddModule<SedModule>("SedModule", ModuleFilter.None);
+            _client.AddModule<SedModule>("SedModule", ModuleFilter.ChannelWhitelist);
             _client.AddModule<StatusModule>("Status", ModuleFilter.None);
-            _client.AddModule<TwitchEmotesModule>("TwitchEmotes", ModuleFilter.None);
+            _client.AddModule<TwitchEmotesModule>("TwitchEmotes", ModuleFilter.ChannelWhitelist);
             _client.AddModule<TwitterModule>("TwitterModule", ModuleFilter.None);
             _client.AddModule<Waifu2xModule>("Waifu2xModule", ModuleFilter.None);
             _client.AddModule<YoutubeModule>("YoutubeModule", ModuleFilter.None);
