@@ -34,7 +34,7 @@ namespace DiscordBot.Modules.Sed
                        string repl = Regex.Match(om, @"\bs/.*/(.*)/").Groups[1].Value;
                        /// ???????????
                        ///
-                       var result = BackLog.OrderBy(x => x.Key.Timestamp).Where(x => Regex.IsMatch(x.Key.Text,what,RegexOptions.IgnoreCase)); ;
+                       var result = BackLog.OrderBy(x => x.Key.Timestamp).Where(x => Regex.IsMatch(x.Key.Text,what)); ;
 
                        if (!string.IsNullOrEmpty(what) && result.FirstOrDefault().Key.Channel == e.Channel)
                        {
