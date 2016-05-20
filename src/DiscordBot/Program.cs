@@ -78,7 +78,6 @@ namespace DiscordBot
             _client.AddModule<FeedModule>("Feeds", ModuleFilter.None);
             _client.AddModule<GithubModule>("Repos", ModuleFilter.None);
             _client.AddModule<GImagesModule>("GImages", ModuleFilter.None);
-            _client.AddModule<ImagesModule>("Images", ModuleFilter.None);
             _client.AddModule<ModulesModule>("Modules", ModuleFilter.None);
             _client.AddModule<PublicModule>("Public", ModuleFilter.None);
             _client.AddModule<TwitchModule>("Twitch", ModuleFilter.None);
