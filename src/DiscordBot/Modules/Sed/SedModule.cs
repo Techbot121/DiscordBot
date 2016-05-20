@@ -40,7 +40,7 @@ namespace DiscordBot.Modules.Sed
                        {
                            var msgusr = result.FirstOrDefault().Key.User;
                            // string[] ssorg = result.FirstOrDefault().Key.Text.Split(null).Select(x => x.Replace(what, repl)).ToArray(); // what the actual fuckk
-                           string replacement = Regex.Replace(result.FirstOrDefault().Key.Text, @"\b" + what + @"\b", repl, RegexOptions.IgnoreCase);
+                           string replacement = Regex.Replace(result.FirstOrDefault().Key.Text, what, repl, RegexOptions.IgnoreCase);
 
                            StringBuilder sb = new StringBuilder();
 
