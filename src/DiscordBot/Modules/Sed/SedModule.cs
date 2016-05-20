@@ -34,13 +34,13 @@ namespace DiscordBot.Modules.Sed
                        string repl = Regex.Match(om, @"\bs/.*/(.*)/").Groups[1].Value;
                        /// ???????????
                        ///
-                       var result = BackLog.OrderBy(x => x.Key.Timestamp).Where(x => x.Key.Text.Contains(what)); ;
+                       var result = BackLog.OrderBy(x => x.Key.Timestamp).Where(x => Regex.IsMatch(x.Key.Text,what,RegexOptions.IgnoreCase)); ;
 
-                       if (result.Any() && result.FirstOrDefault().Key.Channel == e.Channel)
+                       if (!string.IsNullOrEmpty(what) && result.FirstOrDefault().Key.Channel == e.Channel)
                        {
                            var msgusr = result.FirstOrDefault().Key.User;
                            // string[] ssorg = result.FirstOrDefault().Key.Text.Split(null).Select(x => x.Replace(what, repl)).ToArray(); // what the actual fuckk
-                           string replacement = Regex.Replace(result.FirstOrDefault().Key.Text, what, repl, RegexOptions.IgnoreCase);
+                           string replacement = Regex.Replace(result.FirstOrDefault().Key.Text, what, repl);
 
                            StringBuilder sb = new StringBuilder();
 
@@ -61,7 +61,7 @@ namespace DiscordBot.Modules.Sed
                    }
                    else
                    {
-                       if (BackLog.Count >= 50)
+                       if (BackLog.Count >= 100)
                        {
                            BackLog.Remove(BackLog.Keys.OrderBy(x => x.Timestamp).FirstOrDefault());
                        }
