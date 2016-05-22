@@ -15,7 +15,7 @@ node {
                 $DOTNET restore
                 $DOTNET build
                 BUILD_ID=dontKillMe
-                screen -dmS "oldhal1320" $DOTNET run &''' // ditto
+                screen -dmS "oldhal1320" $DOTNET run &'''
                                 
             stage 'Post-Build'
             step([$class: 'GitHubCommitStatusSetter', statusResultSource: [$class: 'ConditionalStatusResultSource', results: []]])

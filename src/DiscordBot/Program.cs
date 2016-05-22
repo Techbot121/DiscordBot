@@ -16,7 +16,6 @@ using DiscordBot.Modules.Twitch;
 using DiscordBot.Modules.TwitchEmotes;
 using DiscordBot.Modules.Twitter;
 using DiscordBot.Modules.Waifu2x;
-using DiscordBot.Modules.Youtube;
 using DiscordBot.Services;
 using System;
 using System.Text;
@@ -86,7 +85,6 @@ namespace DiscordBot
             _client.AddModule<TwitchEmotesModule>("TwitchEmotes", ModuleFilter.None);
             _client.AddModule<TwitterModule>("TwitterModule", ModuleFilter.None);
             _client.AddModule<Waifu2xModule>("Waifu2xModule", ModuleFilter.None);
-            _client.AddModule<YoutubeModule>("YoutubeModule", ModuleFilter.None);
             //_client.AddModule(new ExecuteModule(env, exporter), "Execute", ModuleFilter.ServerWhitelist);
 
 #if PRIVATE
